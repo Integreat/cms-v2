@@ -23,7 +23,7 @@ sys.path.append(os.path.abspath("./"))
 #: The path to the django settings module (see :doc:`sphinxcontrib-django2:readme`)
 django_settings = "backend.sphinx_settings"
 #: The "major.minor" version of Django
-django_doc_version = f"{django_version[0]}.{django_version[1]}"
+django_version = f"{django_version[0]}.{django_version[1]}"
 
 # -- Project information -----------------------------------------------------
 
@@ -42,6 +42,8 @@ github_repository = "integreat-cms"
 github_url = f"https://github.com/{github_username}/{github_repository}"
 #: GitHub pages URL (target of gh-pages branch)
 github_pages_url = f"https://{github_username}.github.io/{github_repository}"
+# GitHub URL of Django repository
+django_github_url = f"https://github.com/django/django/blob/stable/{django_version}.x"
 
 #: The full version, including alpha/beta/rc tags
 release = VERSION
@@ -82,8 +84,8 @@ intersphinx_mapping = {
         None,
     ),
     "django": (
-        f"https://docs.djangoproject.com/en/{django_doc_version}/",
-        f"https://docs.djangoproject.com/en/{django_doc_version}/_objects/",
+        f"https://docs.djangoproject.com/en/{django_version}/",
+        f"https://docs.djangoproject.com/en/{django_version}/_objects/",
     ),
     "django-filer": ("https://django-filer.readthedocs.io/en/latest/", None),
     "django-mptt": ("https://django-mptt.readthedocs.io/en/latest/", None),
@@ -98,6 +100,7 @@ templates_path = ["templates"]
 extlinks = {
     "github": (f"{github_url}/%s", ""),
     "github-source": (f"{github_url}/blob/develop/%s", ""),
+    "django-source": (f"{django_github_url}/%s", ""),
 }
 #: A string of reStructuredText that will be included at the end of every source file that is read. Used for substitutions.
 rst_epilog = f"""
@@ -109,6 +112,8 @@ rst_epilog = f"""
 nitpicky = True
 #: A list of (type, target) tuples that should be ignored when :attr:`nitpicky` is ``True``
 nitpick_ignore = [
+    ("py:class", "_io.StringIO"),
+    ("py:class", "builtins.int"),
     ("py:class", "builtins.AssertionError"),
     ("py:class", "builtins.int"),
     ("py:attr", "django.contrib.auth.models.User.chat_messages"),
@@ -124,8 +129,12 @@ nitpick_ignore = [
     ("py:class", "django.contrib.auth.tokens.PasswordResetTokenGenerator"),
     ("py:func", "django.contrib.sitemaps.Sitemap._urls"),
     ("py:class", "django.core.handlers.WSGIHandler"),
+    ("py:class", "django.core.serializers.base.ProgressBar"),
+    ("py:class", "django.core.serializers.xml_serializer.Serializer"),
+    ("py:class", "django.core.serializers.xml_serializer.Deserializer"),
     ("py:class", "django.forms.models.ModelChoiceIterator"),
     ("py:func", "django.utils.text.capfirst"),
+    ("py:class", "django.utils.xmlutils.SimplerXMLGenerator"),
     ("py:class", "linkcheck.Linklist"),
     ("py:class", "linkcheck.models.Link"),
     ("py:attr", "linkcheck.models.Link.event_translations"),
@@ -197,7 +206,7 @@ def linkcode_resolve(domain, info):
     module_path = module_str.replace(".", "/")
     filename = module.__file__.partition(module_path)[2]
     if module_str.startswith("django."):
-        url = "https://github.com/django/django/blob/stable/2.2.x"
+        url = django_github_url
     else:
         url = f"{github_url}/blob/develop/src"
     return f"{url}/{module_path}{filename}{line_number_reference}"

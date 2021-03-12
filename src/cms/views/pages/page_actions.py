@@ -16,15 +16,15 @@ from django.http import HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 from django.utils.text import slugify
 from django.utils.translation import ugettext as _
-from django.views.static import serve
 from django.views.decorators.http import require_POST
 
-from backend.settings import WEBAPP_URL
+from backend.settings import WEBAPP_URL, XLIFF_UPLOAD_DIR
+from xliff.utils import pages_to_zipped_xliffs, xliff_import_diff
 from ...constants import text_directions
 from ...decorators import region_permission_required, staff_required
 from ...forms import PageForm
 from ...models import Page, Language, Region, PageTranslation
-from ...page_xliff_converter import PageXliffHelper, XLIFFS_DIR
+from ...utils.file_utils import extract_zip_archive
 from ...utils.pdf_utils import generate_pdf
 from ...utils.slug_utils import generate_unique_slug
 
@@ -314,33 +314,39 @@ def download_xliff(request, region_slug, language_slug):
 
     page_ids = request.POST.getlist("selected_ids[]")
 
-    if page_ids:
-        region = Region.get_current_region(request)
-        pages = get_list_or_404(region.pages, id__in=page_ids)
-        target_language = get_object_or_404(
-            region.language_tree_nodes, language__slug=language_slug
-        ).language
-        source_language = get_object_or_404(
-            region.language_tree_nodes, language=target_language
-        ).parent.language
-        page_xliff_helper = PageXliffHelper(
-            src_lang=source_language, tgt_lang=target_language
+    if not page_ids:
+        messages.error(
+            request,
+            _("No pages selected for XLIFF export."),
         )
-        zip_path = page_xliff_helper.pages_to_zipped_xliffs(region, pages)
-        if zip_path is not None and zip_path.startswith(XLIFFS_DIR):
-            logger.info(
-                "XLIFFS for pages %r exported by %r",
-                page_ids,
-                request.user.profile,
-            )
-            response = serve(
-                request, zip_path.split(XLIFFS_DIR)[1], document_root=XLIFFS_DIR
-            )
-            response["Content-Disposition"] = 'attachment; filename="{}"'.format(
-                zip_path.split(os.sep)[-1]
-            )
-            PageXliffHelper.post_translation_state(pages, target_language.slug, True)
-            return response
+        return redirect(
+            "pages",
+            **{
+                "region_slug": region_slug,
+                "language_slug": language_slug,
+            },
+        )
+
+    region = Region.get_current_region(request)
+    pages = get_list_or_404(region.pages, id__in=page_ids)
+
+    target_language = get_object_or_404(
+        region.language_tree_nodes,
+        language__slug=language_slug,
+        parent__isnull=False,
+    ).language
+
+    zip_url = pages_to_zipped_xliffs(pages, target_language)
+
+    logger.info(
+        "XLIFFS for pages %r exported by %r",
+        page_ids,
+        request.user.profile,
+    )
+    PageTranslation.objects.filter(page__in=pages, language=target_language).update(
+        currently_in_translation=True
+    )
+    request.session["xliff-download-url"] = zip_url
     return redirect(
         "pages",
         **{
@@ -368,11 +374,14 @@ def post_translation_state_ajax(request, region_slug):
     page_id = decoded_json["pageId"]
     translation_state = decoded_json["translationState"]
     region = Region.get_current_region(request)
-    page = get_list_or_404(region.pages, id=page_id)
-    PageXliffHelper.post_translation_state(
-        list(page), target_language, translation_state
+    page = get_object_or_404(region.pages, id=page_id)
+    page_translation = page.get_translation(target_language.code)
+    if page_translation:
+        page_translation.update(currently_in_translation=translation_state)
+        return JsonResponse({"language": target_language})
+    return JsonResponse(
+        {"error": _("Could not update page translation state")}, status=400
     )
-    return JsonResponse({"language": target_language})
 
 
 @require_POST
@@ -395,31 +404,72 @@ def upload_xliff(request, region_slug, language_slug):
     :return: A redirection to the :class:`~cms.views.pages.page_tree_view.PageTreeView`
     :rtype: ~django.http.HttpResponseRedirect
     """
-
-    if request.FILES.get("xliff_file"):
-        xliff_helper = PageXliffHelper()
-        upload_file = request.FILES["xliff_file"]
-        upload_dir = os.path.join(XLIFFS_DIR, "upload", str(uuid.uuid4()))
+    xliff_paths = []
+    upload_files = request.FILES.getlist("xliff_file")
+    if upload_files:
+        logger.debug("Uploaded files: %r", upload_files)
+        upload_dir = os.path.join(XLIFF_UPLOAD_DIR, str(uuid.uuid4()))
         os.makedirs(upload_dir, exist_ok=True)
-        with open(os.path.join(upload_dir, upload_file.name), "wb+") as file_write:
-            for chunk in upload_file.chunks():
-                file_write.write(chunk)
-        if upload_file.name.endswith(".zip"):
-            xliff_paths = xliff_helper.extract_zip_file(
-                os.path.join(upload_dir, upload_file.name)
-            )
-        elif upload_file.name.endswith((".xliff", ".xlf")):
-            xliff_paths = [os.path.join(upload_dir, upload_file.name)]
-        else:  # no supported file name ending
-            xliff_paths = []
+        for upload_file in upload_files:
+            if not upload_file.name.endswith((".zip", ".xliff", ".xlf")):
+                # File type not supported
+                messages.error(
+                    request,
+                    _('File "{}" is neither a ZIP archive nor an XLIFF file.').format(
+                        upload_file.name
+                    ),
+                )
+                logger.warning(
+                    "File %r is neither a ZIP archive nor an XLIFF file",
+                    upload_file.name,
+                )
+                continue
+
+            with open(os.path.join(upload_dir, upload_file.name), "wb+") as file_write:
+                # Using chunks() instead of read() ensures that large files don’t overwhelm your system’s memory
+                for chunk in upload_file.chunks():
+                    file_write.write(chunk)
+
+            if upload_file.name.endswith(".zip"):
+                # Extract zip archive
+                xliff_paths_tmp, invalid_file_paths = extract_zip_archive(
+                    os.path.join(upload_dir, upload_file.name), upload_dir
+                )
+                # Append contents of zip archive to total list of xliff files
+                xliff_paths += xliff_paths_tmp
+                if not xliff_paths_tmp:
+                    messages.error(
+                        request,
+                        _('The ZIP archive "{}" does not contain XLIFF files.').format(
+                            upload_file.name
+                        ),
+                    )
+                elif invalid_file_paths:
+                    messages.warning(
+                        request,
+                        _(
+                            'The ZIP archive "{}" contains the following invalid files: "{}"'
+                        ).format(upload_file.name, '", "'.join(invalid_file_paths)),
+                    )
+            else:
+                xliff_paths.append(os.path.join(upload_dir, upload_file.name))
+    else:
+        messages.error(
+            request,
+            _("No XLIFF file was selected for import."),
+        )
+
+    if xliff_paths and upload_dir:
+        logger.debug("Uploaded XLIFF files: %r", xliff_paths)
+        # Remove duplicates
+        xliff_paths = list(dict.fromkeys(xliff_paths))
+        # logger.debug("Translation diff: %r", diff)
         return render(
             request,
             "pages/page_xliff_confirm.html",
             {
                 "upload_dir": os.path.basename(upload_dir),
-                "translation_diffs": xliff_helper.generate_xliff_import_diff(
-                    xliff_paths
-                ),
+                "translation_diffs": xliff_import_diff(upload_dir),
                 "language": Language.objects.get(slug=language_slug),
             },
         )
@@ -454,15 +504,15 @@ def confirm_xliff_import(request, region_slug, language_slug):
     """
 
     if request.POST.get("upload_dir"):
-        upload_dir = os.path.join(XLIFFS_DIR, "upload", request.POST.get("upload_dir"))
+        upload_dir = os.path.join(XLIFF_UPLOAD_DIR, request.POST.get("upload_dir"))
+        # pylint: disable=unused-variable
         xliff_paths = [
             os.path.join(upload_dir, f)
             for f in os.listdir(upload_dir)
             if os.path.isfile(os.path.join(upload_dir, f))
             and f.endswith((".xliff", ".xlf"))
         ]
-        xliff_helper = PageXliffHelper()
-        xliff_helper.import_xliff_files(xliff_paths, user=request.user)
+        # Todo: import XLIFF files
         logger.info(
             "XLIFFS of directory %r imported by %r",
             upload_dir,

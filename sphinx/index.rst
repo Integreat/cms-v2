@@ -91,12 +91,14 @@ Reference
     ref/api
     ref/gvz_api
     ref/sitemap
+    ref/xliff
 
 * :doc:`ref/backend`: This is the project's main app which contains all configuration files.
 * :doc:`ref/cms`: This is the content management system for backend users which contains all database models, views, forms and templates.
 * :doc:`ref/api`: This is the app which contains all API routes and Classes which maps the cms models to API JSON responses. This is not the API documentation itself, but the Django developer documentation. A link to the API documentation will follow soon.
 * :doc:`ref/gvz_api`: This is the app to communicate with our Gemeindeverzeichnis API to automatically import coordinates and region aliases
 * :doc:`ref/sitemap`: This is the app to dynamically generate a sitemap.xml for the webapp
+* :doc:`ref/xliff`: The XLIFF serializer module
 
 
 .. toctree::
@@ -108,6 +110,7 @@ Reference
     ref-ext/api
     ref-ext/gvz_api
     ref-ext/sitemap
+    ref-ext/xliff
 
 
 Indices

@@ -106,6 +106,18 @@ class Language(models.Model):
         """
         return ugettext(self.english_name)
 
+    def get_source_language(self, region):
+        """
+        This returns the source language of this language in the given region
+
+        :return: The source language of the language
+        :rtype: ~cms.models.languages.language.Language
+        """
+        language_tree_node = self.language_tree_nodes.filter(region=region).first()
+        if language_tree_node and language_tree_node.parent:
+            return language_tree_node.parent.language
+        return None
+
     def __str__(self):
         """
         This overwrites the default Django :meth:`~django.db.models.Model.__str__` method which would return ``Language object (id)``.

@@ -124,6 +124,20 @@ class PageTreeView(PermissionRequiredMixin, TemplateView, PageContextMixin):
             filter_form = PageFilterForm()
             filter_form.changed_data.clear()
 
+        if "xliff-download-url" in request.session:
+            messages.success(
+                request,
+                _("XLIFF file successfully created.")
+                + " "
+                + _("If the download does not start automatically, please click")
+                + " <a data-auto-download href='"
+                + request.session["xliff-download-url"]
+                + "' class='font-bold underline hover:no-underline'>"
+                + _("here")
+                + "</a>",
+            )
+            del request.session["xliff-download-url"]
+
         return render(
             request,
             self.template_name,

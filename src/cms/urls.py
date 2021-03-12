@@ -5,7 +5,6 @@ See :mod:`backend.urls` for the other namespaces of this application.
 For more information on this file, see :doc:`topics/http/urls`.
 """
 from django.conf.urls import include, url
-from django.conf.urls.static import static
 from django.conf import settings as django_settings
 from django.views.generic import RedirectView
 
@@ -944,4 +943,4 @@ urlpatterns = [
     url(
         r"^favicon\.ico$", RedirectView.as_view(url="/static/images/integreat-icon.png")
     ),
-] + static(django_settings.MEDIA_URL, document_root=django_settings.MEDIA_ROOT)
+]

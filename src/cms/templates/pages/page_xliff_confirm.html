@@ -22,35 +22,78 @@ pre {
 }
 </style>
 <div class="xliff-confirm">
-    <div class="m-4">
-      <form action="{% url 'confirm_xliff_import' region_slug=region.slug language_slug=language.slug%}" method="POST">
+    <div class="mb-4">
         <h1 class="heading">{% trans 'Review XLIFF Import' %}</h1>
         <p class="pb-4">{% trans 'Please review the changes that will be applied to the page translations below.' %}</p>
-        <input type="submit" value="{% trans 'Confirm' %}" class="inline-block cursor-pointer bg-blue-500 hover:bg-blue-600 text-white h-full font-bold py-2 px-4 rounded p-4">
-        <input type="button" value="{% trans 'Abort' %}" onclick="window.location='{% url 'pages' region_slug=region.slug language_slug=language.slug %}';" class="inline-block cursor-pointer bg-red-500 hover:bg-red-600 text-white h-full font-bold py-2 px-4 rounded p-4">
-        <input type="hidden" value={{ upload_dir }} name="upload_dir">
-        {% csrf_token %}
-      </form>
+        <form action="{% url 'confirm_xliff_import' region_slug=region.slug language_slug=language.slug%}" method="POST">
+            {% csrf_token %}
+            <input type="submit" value="{% trans 'Confirm' %}" class="inline-block cursor-pointer bg-blue-500 hover:bg-blue-600 text-white h-full font-bold py-3 px-4 rounded mr-2">
+            <input type="button" value="{% trans 'Abort' %}" onclick="window.location='{% url 'pages' region_slug=region.slug language_slug=language.slug %}';" class="inline-block cursor-pointer bg-red-500 hover:bg-red-600 text-white h-full font-bold py-3 px-4 rounded">
+            <input type="hidden" value={{ upload_dir }} name="upload_dir">
+        </form>
     </div>
-    {% for xliff_diff in translation_diffs %}
-    <div class="border border-{% if xliff_diff.error %}red{% else %}green{% endif %}-500 m-4">
-        {% if xliff_diff.error %}
-        <h2 class="text-2xl m-4">{% trans 'Translation cannot be imported' %}</h2>
-        <p class="m-4">{% trans 'The page or target language does not exist.' %}
-        <ul class="list-disc m-4 pl-4">
-            <li class="">{% trans 'Title' %}: {{ xliff_diff.title }}</li>
-            <li class="">{% trans 'Page ID' %}: {{ xliff_diff.page_id }}</li>
-            <li class="">{% trans 'Target language slug' %}: {{ xliff_diff.tgt_lang_slug }}</li>
-        <ul>
-        {% else %}
-        <h2 class="text-2xl m-4">XLIFF {% trans 'file' %}: {{ xliff_diff.xliff_name }}</h2>
-        {% if xliff_diff.current_version_newer %}<p class="text-red-700 m-4">{% trans 'Warning: the translation has been updated since the XLIFF was exported.' %}</p>{% endif %}
-        <h2 class="text-2xl m-4">{% trans 'Title' %}</h2>
-        <pre class="diff m-4 p-4">{% if xliff_diff.title_diff %}{{xliff_diff.title_diff }}{% else %}{% trans 'No change' %}{% endif %}</pre>
-        <h2 class="text-2xl m-4">{% trans 'Content' %}</h2>
-        <pre class="diff m-4 p-4">{% if xliff_diff.content_diff %}{{xliff_diff.content_diff }}{% else %}{% trans 'No change' %}{% endif %}</pre>
-        {% endif %}
-    </div>
+    {% for diff in translation_diffs %}
+        <div class="mb-4 rounded border border-solid border-gray-200 shadow bg-white">
+            <div class="p-4 rounded bg-blue-500">
+                <h3 class="font-bold text-white"><i data-feather="file"></i> {% trans 'File' %}: {{ diff.file }}</h3>
+            </div>
+            <div class="p-4 flex flex-wrap xl:flex-row-reverse">
+                <div class="w-full pb-4 xl:w-1/3 xl:pl-4 xl:pb-0 flex flex-wrap xl:block gap-8 xl:mt-14">
+                    <div>
+                        <label class="block font-bold text-lg">{% trans 'Page' %}: </label>
+                        {{ diff.existing.page.best_translation.title }}
+                        <span class="font-bold">(ID: {{ diff.existing.page.id }})</span>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-lg">{% trans 'Language' %}:</label>
+                        {{ diff.existing.language }}
+                    </div>
+                    <div>
+                        <label class="block font-bold text-lg">{% trans 'Last updated' %}:</label>
+                        <i data-feather="calendar"></i> {{ diff.existing.last_updated }} {% trans 'by' %}
+                        <i data-feather="user"></i> {{ diff.existing.creator.profile.full_user_name }}
+                    </div>
+                </div>
+                <div class="w-full xl:w-2/3 flex flex-col">
+                    <ul class="flex flex-wrap pl-4">
+                        <li class="xliff-show-preview-diff mr-1 z-10" style="margin-bottom: -2px">
+                            <div class="bg-white text-blue-500 border-l-2 border-t-2 border-r-2 border-blue-500 font-bold rounded-t-lg">
+                                <div class="border-b-2 border-white p-4">
+                                    <i data-feather="layout"></i>
+                                    {% trans 'Preview' %}
+                                </div>
+                            </div>
+                        </li>
+                        <li class="xliff-show-source-code-diff cursor-pointer mr-1" style="margin-bottom: -2px">
+                            <div class="bg-white text-blue-500 hover:bg-blue-500 hover:text-white border-l-2 border-t-2 border-r-2 border-blue-500 font-bold rounded-t-lg">
+                                <div class="border-b-2 border-white">
+                                    <div class="p-4"><i data-feather="code"></i> {% trans 'Source Code' %}</div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="xliff-diff-preview w-full p-4 rounded border-2 border-blue-500 bg-white flex-auto flex-grow">
+                        <div class="xliff-import-source hidden">
+                            <h1 class="{% if not diff.right_to_left %} font-default {% endif %}">{{ diff.existing.title }}</h1>
+                            {{ diff.existing.text|safe }}
+                        </div>
+                        <div class="xliff-import-target hidden">
+                            <h1 class="{% if not diff.right_to_left %} font-default {% endif %}">{{ diff.import.title }}</h1>
+                            {{ diff.import.text|safe }}
+                        </div>
+                        <div class="xliff-diff-preview-rendered {% if diff.existing.language.slug == 'zh-CN' %} font-content-sc {% elif diff.right_to_left %} font-content-rtl text-right {% else %} font-content {% endif %}"></div>
+                    </div>
+                    <div class="xliff-diff-source-code w-full p-4 rounded border-2 border-blue-500 bg-white flex-auto hidden">
+                        {% trans 'No changes detected.' as no_change_text %}
+                        <label class="block mb-2 font-bold">{% trans 'Title' %}</label>
+                        <p class="whitespace-pre-wrap font-mono">{% firstof diff.source_diff.title no_change_text %}</p>
+                        <label class="block mb-2 mt-4 font-bold">{% trans 'Content' %}</label>
+                        <p class="whitespace-pre-wrap font-mono">{% firstof diff.source_diff.text no_change_text %}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     {% endfor %}
+
 </div>
 {% endblock %}

@@ -166,6 +166,7 @@ INSTALLED_APPS = [
     "mptt",
     "rules.apps.AutodiscoverRulesConfig",
     "linkcheck",
+    "xliff",
 ]
 
 # The default Django Admin application will only be activated if the system is in debug mode.
@@ -468,6 +469,10 @@ LOGGING = {
             "handlers": ["console-colored", "logfile", "mail_admins"],
             "level": LOG_LEVEL,
         },
+        "xliff": {
+            "handlers": ["console-colored", "logfile", "mail_admins"],
+            "level": LOG_LEVEL,
+        },
         # Syslog for authentication
         "auth": {
             "handlers": ["console", "logfile", "authlog", "syslog"],
@@ -672,8 +677,37 @@ PER_PAGE = 16
 if "LINKCHECK_DISABLE_LISTENERS" in os.environ:
     LINKCHECK_DISABLE_LISTENERS = True
 
+
 #############################
 # Push Notification Channel #
 #############################
 
 CHANNELS = (("News", "News"),)
+
+
+#######################
+# XLIFF SERIALIZATION #
+#######################
+
+#: A dictionary of modules containing serializer definitions (provided as strings),
+#: keyed by a string identifier for that serialization type (see :setting:`django:SERIALIZATION_MODULES`).
+SERIALIZATION_MODULES = {
+    "xliff": "xliff.generic_serializer",
+    "xliff-1.2": "xliff.xliff1_serializer",
+    "xliff-2.0": "xliff.xliff2_serializer",
+}
+
+#: The default fields to be used for the XLIFF serialization
+XLIFF_DEFAULT_FIELDS = ("title", "text")
+
+#: A mapping for changed field names to preserve backward compability after a database field was renamed
+XLIFF_LEGACY_FIELDS = {"body": "text"}
+
+#: The directory to which xliff files should be uploaded
+XLIFF_UPLOAD_DIR = os.path.join(BASE_DIR, "xliff/upload/")
+
+#: The directory from which xliff files should be downloaded
+XLIFF_DOWNLOAD_DIR = os.path.join(BASE_DIR, "xliff/download/")
+
+#: The URL path where XLIFF files are served for download
+XLIFF_URL = "/xliff/"

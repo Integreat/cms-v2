@@ -309,26 +309,22 @@ datalist option {
   transform: translateX(-50%);
 }
 
-/* Page Revision Diff */
-.revision-diff {
+/* Page Diff */
+.revision-diff, .xliff-diff-preview-rendered {
   h1 {
-    font-size: 1.5rem;
-    margin: inherit;
+    @apply font-bold mb-2 text-2xl;
   }
   h2 {
-    font-size: 1.25rem;
-    margin: inherit;
+    @apply text-xl;
   }
   h3 {
-    font-size: 1.125rem;
-    margin: inherit;
+    @apply text-lg;
   }
   ins {
-    background-color: #9ae6b4;
-    text-decoration: none;
+    @apply bg-green-300 no-underline;
   }
   del {
-    background-color: #feb2b2;
+    @apply bg-red-300;
   }
 }
 

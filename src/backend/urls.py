@@ -16,8 +16,9 @@ Additionally, the error handlers in :mod:`cms.views.error_handler` are reference
 
 For more information on this file, see :doc:`topics/http/urls`.
 """
-from django.conf.urls import include, url
 from django.conf import settings
+from django.conf.urls import include, url
+from django.conf.urls.static import static
 from django.contrib import admin
 
 
@@ -35,6 +36,8 @@ urlpatterns += [
     url(r"^", include("sitemap.urls")),
     url(r"^", include("cms.urls")),
 ]
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.XLIFF_URL, document_root=settings.XLIFF_DOWNLOAD_DIR)
 
 handler400 = "cms.views.error_handler.handler400"
 handler403 = "cms.views.error_handler.handler403"

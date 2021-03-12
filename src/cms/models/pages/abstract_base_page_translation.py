@@ -175,12 +175,22 @@ class AbstractBasePageTranslation(models.Model):
                  :class:`~cms.models.languages.language.Language`)
         :rtype: ~cms.models.pages.page_translation.PageTranslation
         """
-        source_language_tree_node = self.page.region.language_tree_nodes.get(
-            language=self.language
-        ).parent
-        if source_language_tree_node:
-            return self.page.get_translation(source_language_tree_node.slug)
+        source_language = self.language.get_source_language(self.page.region)
+        if source_language:
+            return self.page.get_translation(source_language.slug)
         return None
+
+    @property
+    def latest_revision(self):
+        """
+        This property is a link to the most recent version of this translation.
+
+        :return: The latest revision of the translation
+        :rtype: ~cms.models.pages.page_translation.PageTranslation
+        """
+        return self.page.translations.filter(
+            language=self.language,
+        ).first()
 
     @property
     def latest_public_revision(self):
