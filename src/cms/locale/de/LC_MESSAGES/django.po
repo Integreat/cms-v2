@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-31 17:37+0000\n"
+"POT-Creation-Date: 2021-06-01 12:30+0000\n"
 "Last-Translator: Integreat <info@integreat-app.de>\n"
 "Language-Team: Integreat <info@integreat-app.de>\n"
 "Language: German\n"
@@ -1439,6 +1439,7 @@ msgstr "Alle Regionen"
 #: templates/feedback/admin_feedback_list.html:32
 #: templates/feedback/region_feedback_list.html:32
 #: templates/language_tree/language_tree.html:29
+#: templates/pages/page_xliff_confirm.html:48
 #: templates/statistics/statistics_overview.html:53
 msgid "Language"
 msgstr "Sprache"
@@ -1694,7 +1695,7 @@ msgid "description"
 msgstr "Beschreibung"
 
 #: models/events/event_translation.py:50 models/feedback/feedback.py:28
-#: models/languages/language.py:133 models/languages/language_tree_node.py:23
+#: models/languages/language.py:145 models/languages/language_tree_node.py:23
 #: models/pages/imprint_page_translation.py:32
 #: models/pages/page_translation.py:50 models/pois/poi_translation.py:53
 #: models/push_notifications/push_notification_translation.py:27
@@ -1923,7 +1924,7 @@ msgid "offer list feedback"
 msgstr "Angebotslisten-Feedback"
 
 #: models/feedback/page_feedback.py:18
-#: models/pages/abstract_base_page_translation.py:323
+#: models/pages/abstract_base_page_translation.py:333
 #: models/pages/page_translation.py:287
 msgid "page translation"
 msgstr "Seiten-Übersetzung"
@@ -2039,7 +2040,7 @@ msgstr "Der native Name für \"Inhaltsverzeichnis\" in dieser Sprache."
 msgid "This is used in exported PDFs."
 msgstr "Dies wird in exportierten PDFs verwendet."
 
-#: models/languages/language.py:135
+#: models/languages/language.py:147
 msgid "languages"
 msgstr "Sprachen"
 
@@ -2182,7 +2183,7 @@ msgstr "Inhalt der Seite"
 msgid "version"
 msgstr "Version"
 
-#: models/pages/abstract_base_page_translation.py:325
+#: models/pages/abstract_base_page_translation.py:335
 #: models/pages/page_translation.py:289
 msgid "page translations"
 msgstr "Seiten-Übersetzungen"
@@ -3539,7 +3540,7 @@ msgid "Warning"
 msgstr "Warnung"
 
 #: templates/generic_confirmation_dialog.html:20
-#: templates/pages/page_xliff_confirm.html:29
+#: templates/pages/page_xliff_confirm.html:30
 msgid "Confirm"
 msgstr "Bestätigen"
 
@@ -3701,8 +3702,7 @@ msgstr "Diese Version wird <b>nicht</b> in den Apps angezeigt."
 #: templates/imprint/imprint_revisions.html:78
 #: templates/imprint/imprint_sbs.html:70 templates/pages/page_revisions.html:69
 #: templates/pages/page_revisions.html:82 templates/pages/page_sbs.html:81
-#: templates/pages/page_xliff_confirm.html:41
-#: templates/pages/page_xliff_confirm.html:48
+#: templates/pages/page_xliff_confirm.html:88
 #: templates/push_notifications/push_notification_list.html:32
 msgid "Title"
 msgstr "Titel"
@@ -3711,7 +3711,7 @@ msgstr "Titel"
 #: templates/imprint/imprint_revisions.html:79
 #: templates/imprint/imprint_sbs.html:73 templates/pages/page_revisions.html:71
 #: templates/pages/page_revisions.html:83 templates/pages/page_sbs.html:84
-#: templates/pages/page_xliff_confirm.html:50
+#: templates/pages/page_xliff_confirm.html:90
 msgid "Content"
 msgstr "Inhalt"
 
@@ -3860,7 +3860,8 @@ msgstr "Erstellt"
 
 #: templates/languages/language_list.html:30
 #: templates/offer_templates/offer_template_list.html:25
-#: templates/pages/page_tree.html:84 templates/regions/region_list.html:28
+#: templates/pages/page_tree.html:84 templates/pages/page_xliff_confirm.html:52
+#: templates/regions/region_list.html:28
 msgid "Last updated"
 msgstr "Zuletzt aktualisiert"
 
@@ -4201,12 +4202,24 @@ msgid "Export XLIFF for translation to"
 msgstr "Exportiere XLIFF für Übersetzung nach"
 
 #: templates/pages/page_tree.html:133
-msgid "Upload XLIFF File"
-msgstr "XLIFF-Datei hochladen"
+msgid "Import XLIFF files"
+msgstr "XLIFF-Dateien importieren"
 
-#: templates/pages/page_tree.html:143
-msgid "Upload"
-msgstr "Hochladen"
+#: templates/pages/page_tree.html:134
+msgid "Supported file extensions"
+msgstr "Unterstützte Dateiendungen"
+
+#: templates/pages/page_tree.html:139
+msgid "Select files"
+msgstr "Dateien auswählen"
+
+#: templates/pages/page_tree.html:141
+msgid "and {} other files"
+msgstr "und {} weitere Dateien"
+
+#: templates/pages/page_tree.html:145
+msgid "Import"
+msgstr "Importieren"
 
 #: templates/pages/page_tree_archived.html:12
 msgid "Archived Pages"
@@ -4274,11 +4287,11 @@ msgstr "Kurz-URL kopieren"
 msgid "You cannot copy a short link of a page which has no translation."
 msgstr "Sie können keine Kurz-URL zu einer fehlenden Übersetzung kopieren."
 
-#: templates/pages/page_xliff_confirm.html:27
+#: templates/pages/page_xliff_confirm.html:26
 msgid "Review XLIFF Import"
 msgstr "XLIFF Import überprüfen"
 
-#: templates/pages/page_xliff_confirm.html:28
+#: templates/pages/page_xliff_confirm.html:27
 msgid ""
 "Please review the changes that will be applied to the page translations "
 "below."
@@ -4286,39 +4299,37 @@ msgstr ""
 "Bitte überprüfen Sie die Änderungen, die an den Seiten-Übersetzungen "
 "vorgenommen werden."
 
-#: templates/pages/page_xliff_confirm.html:30
+#: templates/pages/page_xliff_confirm.html:31
 msgid "Abort"
 msgstr "Abbrechen"
 
 #: templates/pages/page_xliff_confirm.html:38
-msgid "Translation cannot be imported"
-msgstr "Übersetzung kann nicht importiert werden"
-
-#: templates/pages/page_xliff_confirm.html:39
-msgid "The page or target language does not exist."
-msgstr "Die Seite oder Zielsprache existiert nicht."
-
-#: templates/pages/page_xliff_confirm.html:42
-msgid "Page ID"
-msgstr "Seiten-ID"
-
-#: templates/pages/page_xliff_confirm.html:43
-msgid "Target language slug"
-msgstr "Zielsprachencode"
-
-#: templates/pages/page_xliff_confirm.html:46
-msgid "file"
+msgid "File"
 msgstr "Datei"
 
-#: templates/pages/page_xliff_confirm.html:47
-msgid "Warning: the translation has been updated since the XLIFF was exported."
-msgstr ""
-"Warnung: Die Seiten-Übersetzung hat sich geändert, seit die XLIFF exportiert "
-"wurde."
+#: templates/pages/page_xliff_confirm.html:43
+msgid "Page"
+msgstr "Seite"
 
-#: templates/pages/page_xliff_confirm.html:49
-#: templates/pages/page_xliff_confirm.html:51
-msgid "No change"
+#: templates/pages/page_xliff_confirm.html:53
+msgid "by"
+msgstr "von"
+
+#: templates/pages/page_xliff_confirm.html:63
+msgid "Preview"
+msgstr "Vorschau"
+
+#: templates/pages/page_xliff_confirm.html:70
+msgid "Source Code"
+msgstr "Quellcode"
+
+#: templates/pages/page_xliff_confirm.html:87 views/events/event_view.py:197
+#: views/imprint/imprint_sbs_view.py:197 views/imprint/imprint_view.py:208
+#: views/organizations/organization_view.py:82 views/pages/page_sbs_view.py:193
+#: views/regions/region_view.py:85 views/settings/user_settings_view.py:89
+#: views/settings/user_settings_view.py:106 views/users/region_user_view.py:130
+#: views/users/user_view.py:132
+msgid "No changes detected."
 msgstr "Keine Änderungen vorgenommen."
 
 #: templates/pois/poi_form.html:19
@@ -5016,15 +5027,6 @@ msgid "You cannot edit this event because it is archived."
 msgstr ""
 "Sie können diese Veranstaltung nicht bearbeiten, weil sie archiviert ist."
 
-#: views/events/event_view.py:197 views/imprint/imprint_sbs_view.py:197
-#: views/imprint/imprint_view.py:208
-#: views/organizations/organization_view.py:82 views/pages/page_sbs_view.py:193
-#: views/regions/region_view.py:85 views/settings/user_settings_view.py:89
-#: views/settings/user_settings_view.py:106 views/users/region_user_view.py:130
-#: views/users/user_view.py:132
-msgid "No changes detected."
-msgstr "Keine Änderungen vorgenommen."
-
 #: views/events/event_view.py:232
 msgid "Event was successfully created and published"
 msgstr "Veranstaltung wurde erfolgreich erstellt und veröffentlicht"
@@ -5274,32 +5276,57 @@ msgstr ""
 msgid "Page was successfully deleted"
 msgstr "Seite wurde erfolgreich gelöscht"
 
-#: views/pages/page_actions.py:526
+#: views/pages/page_actions.py:320
+msgid "No pages selected for XLIFF export."
+msgstr ""
+"Es wurden keine gültigen Seiten zur Erzeugung der XLIFF-Datei ausgewählt."
+
+#: views/pages/page_actions.py:383
+msgid "Could not update page translation state"
+msgstr "Zustand der Übersetzung konnte nicht aktualisiert werden"
+
+#: views/pages/page_actions.py:418
+msgid "File \"{}\" is neither a ZIP archive nor an XLIFF file."
+msgstr "Die Datei \"{}\" ist weder ein ZIP-Archiv noch eine XLIFF-Datei."
+
+#: views/pages/page_actions.py:443
+msgid "The ZIP archive \"{}\" does not contain XLIFF files."
+msgstr "Das ZIP-Archiv \"{}\" enthält keine XLIFF-Dateien"
+
+#: views/pages/page_actions.py:451
+msgid "The ZIP archive \"{}\" contains the following invalid files: \"{}\""
+msgstr "Das ZIP-Archiv \"{}\" enthält die folgenden ungültigen Dateien: \"{}\""
+
+#: views/pages/page_actions.py:459
+msgid "No XLIFF file was selected for import."
+msgstr "Es wurde keine XLIFF-Datei für den Import ausgewählt."
+
+#: views/pages/page_actions.py:576
 #, python-brace-format
 msgid "The page \"{page}\" was successfully moved."
 msgstr "Die Seite \"{page}\" wurde erfolgreich verschoben."
 
-#: views/pages/page_actions.py:614 views/pages/page_actions.py:629
+#: views/pages/page_actions.py:664 views/pages/page_actions.py:679
 #, python-brace-format
 msgid "Information: The user {user} has this permission already."
 msgstr "Information: Der Nutzer {user} hat diese Berechtigung bereits"
 
-#: views/pages/page_actions.py:621
+#: views/pages/page_actions.py:671
 #, python-brace-format
 msgid "Success: The user {user} can now edit this page."
 msgstr "Erfolg: Der Nutzer {user} kann nun diese Seite bearbeiten"
 
-#: views/pages/page_actions.py:637
+#: views/pages/page_actions.py:687
 #, python-brace-format
 msgid "Success: The user {user} can now publish this page."
 msgstr "Erfolg: Der Nutzer {user} kann dieses Seite nun veröffentlichen"
 
-#: views/pages/page_actions.py:646 views/pages/page_actions.py:761
+#: views/pages/page_actions.py:696 views/pages/page_actions.py:811
 msgid "An error has occurred. Please contact an administrator."
 msgstr ""
 "Ein Fehler ist aufgetreten. Bitte kontaktieren Sie einen Administrator."
 
-#: views/pages/page_actions.py:729
+#: views/pages/page_actions.py:779
 #, python-brace-format
 msgid ""
 "Information: The user {user} has been removed from the editors of this page, "
@@ -5309,12 +5336,12 @@ msgstr ""
 "bearbeiten wurde entfernt,aber er kann sie auf Grund seiner anderen "
 "Berechtigungen weiterhin bearbeiten."
 
-#: views/pages/page_actions.py:735
+#: views/pages/page_actions.py:785
 #, python-brace-format
 msgid "Success: The user {user} cannot edit this page anymore."
 msgstr "Erfolg: Der Nutzer {user} kann diese Seite nicht mehr bearbeiten"
 
-#: views/pages/page_actions.py:746
+#: views/pages/page_actions.py:796
 #, python-brace-format
 msgid ""
 "Information: The user {user} has been removed from the publishers of this "
@@ -5324,7 +5351,7 @@ msgstr ""
 "veröffentlichen wurde entfernt,aber er kann sie auf Grund seiner anderen "
 "Berechtigungen weiterhin veröffentlichen."
 
-#: views/pages/page_actions.py:752
+#: views/pages/page_actions.py:802
 #, python-brace-format
 msgid "Success: The user {user} cannot publish this page anymore."
 msgstr "Erfolg: Der Nutzer {user} kann diese Seite nicht mehr veröffentlichen"
@@ -5386,6 +5413,18 @@ msgid "You don't have the permission to edit or create pages."
 msgstr ""
 "Sie haben nicht die nötige Berechtigung, um Seiten zu bearbeiten oder zu "
 "erstellen."
+
+#: views/pages/page_tree_view.py:130
+msgid "XLIFF file successfully created."
+msgstr "XLIFF Datei wurde erfolgreich erstellt."
+
+#: views/pages/page_tree_view.py:132
+msgid "If the download does not start automatically, please click"
+msgstr "Wenn der Download nicht automatisch startet, klicken Sie bitte"
+
+#: views/pages/page_tree_view.py:136
+msgid "here"
+msgstr "hier"
 
 #: views/pages/page_view.py:80
 msgid "You cannot edit this page because it is archived."
@@ -5654,6 +5693,42 @@ msgstr ""
 #~ msgid "Enter multiple channels separated by commas."
 #~ msgstr "Mehrere Kanäle mit Kommata getrennt eingeben."
 
+#~ msgid "Upload XLIFF File"
+#~ msgstr "XLIFF-Datei hochladen"
+
+#~ msgid "Upload"
+#~ msgstr "Hochladen"
+
+#~ msgid "Title of the page"
+#~ msgstr "Titel der Seite"
+
+#~ msgid "Content of the page"
+#~ msgstr "Inhalt der Seite"
+
+#~ msgid "Translation cannot be imported"
+#~ msgstr "Übersetzung kann nicht importiert werden"
+
+#~ msgid "The page or target language does not exist."
+#~ msgstr "Die Seite oder Zielsprache existiert nicht."
+
+#~ msgid "Page ID"
+#~ msgstr "Seiten-ID"
+
+#~ msgid "Target language slug"
+#~ msgstr "Zielsprachencode"
+
+#~ msgid "file"
+#~ msgstr "Datei"
+
+#~ msgid ""
+#~ "Warning: the translation has been updated since the XLIFF was exported."
+#~ msgstr ""
+#~ "Warnung: Die Seiten-Übersetzung hat sich geändert, seit die XLIFF "
+#~ "exportiert wurde."
+
+#~ msgid "No change"
+#~ msgstr "Keine Änderungen vorgenommen."
+
 #~ msgid "key"
 #~ msgstr "Schlüssel"
 
@@ -5820,9 +5895,6 @@ msgstr ""
 #~ msgid "Website Hits"
 #~ msgstr "Aufrufe der App"
 
-#~ msgid "Page views"
-#~ msgstr "Seitenaufrufe"
-
 #~ msgid "Calendar week"
 #~ msgstr "Kalenderwoche"
 
@@ -5867,9 +5939,6 @@ msgstr ""
 
 #~ msgid "Offer \"%(offer_name)s\" was successfully deactivated"
 #~ msgstr "Angebot \"%(offer_name)s\" wurde erfolgreich deaktiviert"
-
-#~ msgid "Could not update page translation state"
-#~ msgstr "Zustand der Übersetzung konnte nicht aktualisiert werden"
 
 #~ msgid "Recurrence rule"
 #~ msgstr "Wiederholungs-Regel"
@@ -5986,9 +6055,6 @@ msgstr ""
 
 #~ msgid "Sum"
 #~ msgstr "Summe"
-
-#~ msgid "Page"
-#~ msgstr "Seite"
 
 #~ msgid "Event"
 #~ msgstr "Veranstaltung"
@@ -6473,9 +6539,6 @@ msgstr ""
 
 #~ msgid "POI was successfully created and published."
 #~ msgstr "POI wurde erfolgreich erstellt und veröffentlicht."
-
-#~ msgid "POI was successfully created."
-#~ msgstr "POI wurde erfolgreich erstellt."
 
 #~ msgid "POI was successfully published."
 #~ msgstr "POI wurde erfolgreich veröffentlicht."

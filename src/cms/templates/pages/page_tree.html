@@ -129,21 +129,24 @@
     </div>
 </form>
 {% if request.user.profile.expert_mode %}
-<div class="flex-wrap relative w-auto mt-4">
-    <h3 class="font-bold">{% trans 'Upload XLIFF File' %}</h3>
-    <form class="table-search relative flex flex-wrap h-full mt-2" method="post" enctype="multipart/form-data"
-          action="{% url 'upload_xliff' region_slug=region.slug language_slug=language.slug %}">
-        <i data-feather="upload" class="absolute m-2"></i>
-        <input type="file" name="xliff_file" class="h-full p-2 pl-10 rounded shadow bg-white block">
-        {% csrf_token %}
-        <div class="pl-3">
-            <input type="submit"
-                   class="inline-block cursor-pointer bg-blue-500
-            hover:bg-blue-600 text-white h-full
-            font-bold py-2 px-4 rounded" value="{% trans 'Upload' %}" />
-        </div>
-    </form>
-</div>
+    <div class="flex-wrap relative w-auto mt-4">
+        <h3 class="font-bold">{% trans 'Import XLIFF files' %}</h3>
+        <div class="my-2 text-s text-gray-600">{% trans "Supported file extensions" %}: .zip, .xlf, .xliff</div>
+        <form class="flex flex-wrap h-full mt-2" method="post" enctype="multipart/form-data"
+              action="{% url 'upload_xliff' region_slug=region.slug language_slug=language.slug %}">
+            <label id="xliff_file_label" for="xliff_file" class="inline-block cursor-pointer bg-blue-500 hover:bg-blue-600 text-white h-full font-bold py-2 px-4 rounded">
+                <i data-feather="upload" class="inline-block pr-1"></i>
+                {% trans 'Select files' %}
+            </label>
+            <span id="xliff_file_label_multiple" class="hidden"> {% trans 'and {} other files' %}</span>
+            <input id="xliff_file" type="file" name="xliff_file" class="hidden" accept=".zip, .xlf, .xliff" multiple>
+            {% csrf_token %}
+            <div class="pl-2">
+                <input id="xliff_file_submit" type="submit" value="{% trans 'Import' %}"
+                       class="inline-block bg-gray-500 text-white h-full font-bold py-2 px-4 rounded cursor-not-allowed" disabled/>
+            </div>
+        </form>
+    </div>
 {% endif %}
 
 {% include "../generic_confirmation_dialog.html" %}

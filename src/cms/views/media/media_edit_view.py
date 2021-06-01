@@ -6,7 +6,6 @@ from django.views.generic import TemplateView
 from ...decorators import region_permission_required
 from ...forms import DocumentForm
 from ...models import Document, Region
-from ...utils.file_utils import save_file
 
 
 @method_decorator(login_required, name="dispatch")
@@ -75,8 +74,17 @@ class MediaEditView(TemplateView):
         # current region
         region = Region.get_current_region(request)
 
-        result = save_file(request)
-
-        if result.get("status") == 1:
+        form = DocumentForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
             return redirect("media", **{"region_slug": region.slug})
-        return render(request, self.template_name, {"form": result.get("form")})
+
+        return render(
+            request,
+            self.template_name,
+            {
+                **self.base_context,
+                "form": form,
+                "region_slug": region.slug,
+            },
+        )
