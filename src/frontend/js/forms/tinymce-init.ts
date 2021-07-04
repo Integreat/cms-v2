@@ -86,7 +86,7 @@ window.addEventListener("load", () => {
         },
         insert: {
           title: "Insert",
-          items: "openmediacenter link image media "
+          items: "openmediacenter add_link link image media "
         }
       },
       link_title: false,
@@ -98,6 +98,7 @@ window.addEventListener("load", () => {
       external_plugins: {
         autolink_tel: tinymceConfig.getAttribute("data-custom-plugins"),
         mediacenter: tinymceConfig.getAttribute("data-custom-plugins"),
+        custom_link_input: tinymceConfig.getAttribute("data-custom-plugins"),
       },
       link_default_protocol: "https",
       target_list: false,
