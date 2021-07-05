@@ -46,13 +46,13 @@
             {% endif %}
         {% endif %}
         <div class="w-2/3 flex flex-wrap flex-col pr-2">
-            <ul class="flex flex-wrap pl-4">
+            <ul class="flex flex-wrap items-end pl-4">
                 {% for other_language in languages %}
                     <li class="mr-1 {% if other_language == language %}z-10{% endif %}" style="margin-bottom: -2px">
                         <div class="bg-white text-blue-500 {% if other_language != language %}hover:bg-blue-500 hover:text-white{% endif %} border-l-2 border-t-2 border-r-2 border-blue-500 font-bold rounded-t-lg">
                             <div class="border-b-2 border-white">
                             {% if other_language == language %}
-                                <div class="p-4">
+                                <div class="px-4">
                                     {% if event_form.instance %}
                                         {% if other_language in event_form.instance.languages %}
                                             {% if event_translation_form.instance.is_outdated %}
@@ -81,7 +81,7 @@
                                     {{ other_language.translated_name }}
                                 </div>
                             {% else %}
-                                <a class="block p-4" style="color: inherit;" href="{% url 'edit_event' event_id=event_form.instance.id region_slug=region.slug language_slug=other_language.slug %}">
+                                <a class="block px-4" style="color: inherit;" href="{% url 'edit_event' event_id=event_form.instance.id region_slug=region.slug language_slug=other_language.slug %}">
                                     {% if other_language in event_form.instance.languages %}
                                         {% get_translation event_form.instance other_language.slug as other_event_translation %}
                                         {% if other_event_translation.is_outdated %}
@@ -109,19 +109,27 @@
                         </div>
                     </li>
                 {% endfor %}
+                {% if event_translation_form.instance.id %}
+                    <li class="self-start ml-auto px-2">
+                        {% trans 'Version' %}:
+                        {{ event_translation_form.instance.version }}
+                    </li>
+                {% endif %}
             </ul>
             <div class="w-full mb-4 rounded border-2 border-blue-500 bg-white">
                 <div class="w-full p-4">
-                    {% if event_translation_form.instance.id %}
-                        <label class="inline-block">{% trans 'Version' %}:</label>
-                        {{ event_translation_form.instance.version }}<br>
-                        <label class="inline-block">{% trans 'Status' %}:</label>
-                        {{ event_translation_form.instance.get_status_display }}
-                    {% endif %}
-                    <label for="{{ event_translation_form.title.id_for_label }}" 
-                        data-slugify-url="{% url 'slugify_ajax' region_slug=region.slug language_slug=language.slug model_type='event' %}{% if event_form.instance.id %}?model_id={{ event_form.instance.id }}{% endif %}">
-                        {{ event_translation_form.title.label }}
-                    </label>
+                    <div class="flex justify-between">
+                        <label for="{{ event_translation_form.title.id_for_label }}" 
+                            data-slugify-url="{% url 'slugify_ajax' region_slug=region.slug language_slug=language.slug model_type='event' %}{% if event_form.instance.id %}?model_id={{ event_form.instance.id }}{% endif %}">
+                            {{ event_translation_form.title.label }}
+                        </label>
+                        {% if event_translation_form.instance.id %}
+                            <span class="mr-8">
+                                <label class="inline-block">{% trans 'Status' %}:</label>
+                                {{ event_translation_form.instance.get_status_display }}
+                            </span>
+                        {% endif %}
+                    </div>
                     {% render_field event_translation_form.title|add_error_class:"border-red-500" %}
                     <div id="link-container" class="flex items-center mt-4">
                         <label for="{{ event_translation_form.slug.id_for_label }}">
@@ -153,9 +161,9 @@
         <div class="w-1/3 pl-4 flex flex-wrap flex-col">
             <ul class="flex pl-4">
                 <li class="z-10" style="margin-bottom: -2px">
-                    <div class="bg-white text-blue-500 border-l-2 border-t-2 border-r-2 border-blue-500 font-bold rounded-t-lg p-4">
+                    <div class="bg-white text-blue-500 border-l-2 border-t-2 border-r-2 border-blue-500 font-bold rounded-t-lg px-4">
                         <div class="border-b-4 border-white">
-                            <i data-feather="flag"></i>
+                            <i data-feather="settings"></i>
                             {% trans 'Settings for all translations' %}
                         </div>
                     </div>
