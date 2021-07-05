@@ -25,6 +25,12 @@ class EventForm(CustomModelForm):
         label=_("Recurring"),
         help_text=_("Determines whether the event is repeated at regular intervals."),
     )
+    # Whether or not the event has a physical location
+    has_physical_location = forms.BooleanField(
+        required=False,
+        label=_("Event does not have a physical location"),
+        label_suffix='',
+    )
 
     class Meta:
         """

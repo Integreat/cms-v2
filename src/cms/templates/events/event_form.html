@@ -235,32 +235,36 @@
                         </div>
                     </div>
                     <div>
-                        <label for="{{ event_form.location.id_for_label }}">{{ event_form.location.label }}</label>
-                        {% trans 'Name of event location' as poi_title_placeholder %}
-                        <div class="relative my-2">
-                            <input id="poi-query-input" type="search" autocomplete="off" class="pr-8 appearance-none block w-full bg-white text-gray-800 placeholder-gray-800 border border-gray-400 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:placeholder-gray-600"{% if event_form.disabled %} disabled{% endif %} placeholder="{% if poi %}{{ poi|poi_translation_title:current_language }}{% else %}{{ poi_title_placeholder }}{% endif %}" data-url="{% url 'search_poi_ajax' %}" data-region-slug="{{ region.slug }}" data-default-placeholder="{{ poi_title_placeholder }}">
-                            <div class="absolute inset-y-0 right-0 flex items-center px-2 text-gray-800">
-                                <button id="poi-remove" title="{% trans 'Remove location from event' %}"{% if event_form.disabled %} disabled{% endif %}>
-                                    <i data-feather="trash-2" class="h-5 w-5"></i>
-                                </button>
+                        {% render_field event_form.has_physical_location %}
+                        {{ event_form.has_physical_location.label_tag }}
+                        <div id=location-block>
+                            <label for="{{ event_form.location.id_for_label }}">{{ event_form.location.label }}</label>
+                            {% trans 'Name of event location' as poi_title_placeholder %}
+                            <div class="relative my-2">
+                                <input id="poi-query-input" type="search" autocomplete="off" class="pr-8 appearance-none block w-full bg-white text-gray-800 placeholder-gray-800 border border-gray-400 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:placeholder-gray-600"{% if event_form.disabled %} disabled{% endif %} placeholder="{% if poi %}{{ poi|poi_translation_title:current_language }}{% else %}{{ poi_title_placeholder }}{% endif %}" data-url="{% url 'search_poi_ajax' %}" data-region-slug="{{ region.slug }}" data-default-placeholder="{{ poi_title_placeholder }}">
+                                <div class="absolute inset-y-0 right-0 flex items-center px-2 text-gray-800">
+                                    <button id="poi-remove" title="{% trans 'Remove location from event' %}"{% if event_form.disabled %} disabled{% endif %}>
+                                        <i data-feather="trash-2" class="h-5 w-5"></i>
+                                    </button>
+                                </div>
                             </div>
+                            <div class="relative" id="poi-query-result">
+                                {% include 'events/_poi_query_result.html' %}
+                            </div>
+                            <p class="text-sm italic block mt-2 mb-2">
+                                {% trans 'Create an event location or start typing the name of an existing location' %}.
+                            </p>
+                            <label class="secondary">{% trans 'Address' %}</label>
+                            <input name="poi_id" id="poi-id" class="hidden" value="{% if poi %}{{ poi.id }}{% else %}-1{% endif %}" readonly>
+                            {% trans 'Street' as street_placeholder %}
+                            <input id="poi-address" disabled class="appearance-none block w-full bg-white text-gray-800 border border-gray-400 rounded mb-2 py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-grey" placeholder="{{ street_placeholder }}" value="{% if poi %}{{ poi.address }}{% endif %}" />
+                            {% trans 'City' as city_placeholder %}
+                            <input id="poi-city" disabled class="appearance-none block w-full bg-white text-gray-800 border border-gray-400 rounded mb-2 py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-grey" placeholder="{{ city_placeholder }}" value="{% if poi %}{{ poi.city }}{% endif %}" />
+                            {% trans 'Country' as country_placeholder %}
+                            <input id="poi-country" disabled class="appearance-none block w-full bg-white text-gray-800 border border-gray-400 rounded mb-2 py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-grey" placeholder="{{ country_placeholder }}" value="{% if poi %}{{ poi.country }}{% endif %}" />
+                            <label class="secondary">{% trans 'Map' %}</label>
+                            <i class="text-teal-500">Google Map vs. OSM</i>
                         </div>
-                        <div class="relative" id="poi-query-result">
-                            {% include 'events/_poi_query_result.html' %}
-                        </div>
-                        <p class="text-sm italic block mt-2 mb-2">
-                            {% trans 'Create an event location or start typing the name of an existing location' %}.
-                        </p>
-                        <label class="secondary">{% trans 'Address' %}</label>
-                        <input name="poi_id" id="poi-id" class="hidden" value="{% if poi %}{{ poi.id }}{% else %}-1{% endif %}" readonly>
-                        {% trans 'Street' as street_placeholder %}
-                        <input id="poi-address" disabled class="appearance-none block w-full bg-white text-gray-800 border border-gray-400 rounded mb-2 py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-grey" placeholder="{{ street_placeholder }}" value="{% if poi %}{{ poi.address }}{% endif %}" />
-                        {% trans 'City' as city_placeholder %}
-                        <input id="poi-city" disabled class="appearance-none block w-full bg-white text-gray-800 border border-gray-400 rounded mb-2 py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-grey" placeholder="{{ city_placeholder }}" value="{% if poi %}{{ poi.city }}{% endif %}" />
-                        {% trans 'Country' as country_placeholder %}
-                        <input id="poi-country" disabled class="appearance-none block w-full bg-white text-gray-800 border border-gray-400 rounded mb-2 py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-grey" placeholder="{{ country_placeholder }}" value="{% if poi %}{{ poi.country }}{% endif %}" />
-                        <label class="secondary">{% trans 'Map' %}</label>
-                        <i class="text-teal-500">Google Map vs. OSM</i>
                     </div>
                     <div>
                         <label for="{{ event_form.icon.id_for_label }}">{{ event_form.icon.label }}</label>

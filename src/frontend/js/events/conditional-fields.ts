@@ -76,4 +76,16 @@ window.addEventListener("load", () => {
       );
     });
   }
+
+  // event handler to show recurrence rule form
+  const locationCheckbox = document.getElementById(
+    "id_has_physical_location"
+  );
+  if (locationCheckbox) {
+    locationCheckbox.addEventListener("click", () => {
+      document
+        .getElementById("location-block")
+        .classList.toggle("hidden");
+    });
+  }
 });
