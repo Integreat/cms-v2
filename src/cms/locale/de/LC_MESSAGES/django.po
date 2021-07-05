@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-29 15:13+0000\n"
+"POT-Creation-Date: 2021-07-05 15:33+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Integreat <info@integreat-app.de>\n"
 "Language-Team: Integreat <info@integreat-app.de>\n"
@@ -2272,7 +2272,7 @@ msgstr ""
 msgid "thumbnail URL"
 msgstr "Vorschaubild-URL"
 
-#: models/offers/offer_template.py:30
+#: models/offers/offer_template.py:30 templates/_tinymce_config.html:36
 #: templates/linkcheck/links_by_filter.html:39
 #: templates/offer_templates/offer_template_list.html:22
 #: views/media/media_context_mixin.py:56
@@ -2901,7 +2901,7 @@ msgid "Contents"
 msgstr "Inhalte"
 
 #: templates/_base.html:133 templates/_base.html:275
-#: templates/_tinymce_config.html:35 views/media/media_context_mixin.py:31
+#: templates/_tinymce_config.html:42 views/media/media_context_mixin.py:31
 msgid "Media Library"
 msgstr "Medienbibliothek"
 
@@ -3046,7 +3046,32 @@ msgstr "Öffnungszeiten"
 msgid "Hint"
 msgstr "Tipp"
 
-#: templates/_tinymce_config.html:36
+#: templates/_tinymce_config.html:32 views/media/media_context_mixin.py:52
+msgid "Submit"
+msgstr "Speichern"
+
+#: templates/_tinymce_config.html:33
+#: templates/generic_confirmation_dialog.html:22
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: templates/_tinymce_config.html:34
+msgid "Add Link..."
+msgstr "Link hinzufügen..."
+
+#: templates/_tinymce_config.html:35
+msgid "Add Link"
+msgstr "Link hinzufügen"
+
+#: templates/_tinymce_config.html:37
+msgid "Text to display"
+msgstr "Anzuzeigender Text"
+
+#: templates/_tinymce_config.html:38
+msgid "Or link to existing content"
+msgstr "Oder auf bestehende Inhalte verlinken"
+
+#: templates/_tinymce_config.html:43
 msgid "Media Library..."
 msgstr "Medienbibliothek..."
 
@@ -3736,10 +3761,6 @@ msgstr "Warnung"
 #: templates/pages/page_xliff_confirm.html:29
 msgid "Confirm"
 msgstr "Bestätigen"
-
-#: templates/generic_confirmation_dialog.html:22
-msgid "Cancel"
-msgstr "Abbrechen"
 
 #: templates/icon_widget.html:15
 #, python-format
@@ -5493,10 +5514,6 @@ msgstr "Zurück"
 #: views/media/media_context_mixin.py:51
 msgid "Close detail view"
 msgstr "Detailansicht schließen"
-
-#: views/media/media_context_mixin.py:52
-msgid "Submit"
-msgstr "Absenden"
 
 #: views/media/media_context_mixin.py:53
 msgid "Select"
