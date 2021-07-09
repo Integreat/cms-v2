@@ -3,20 +3,97 @@
 
     const tinymceConfig = document.getElementById("tinymce-config-options");
 
-    async function getCompletions(query) {
-        return [];
+    async function getCompletions(query, id) {
+        const url = `${tinymceConfig.getAttribute("data-link-ajax-url")}?query=${encodeURIComponent(query)}`;
+        const response = await fetch(url);
+        if (response.status != 200) {
+            return [];
+        }
+
+        const data = await response.json();
+        return [data.data, id];
     }
 
+
     tinymce.PluginManager.add('custom_link_input', function (editor, url) {
-
         const open_dialog = function () {
-            let old_search_text = "";
-            let old_link_url = "";
+            let prev_search_text = "";
+            let prev_link_url = "";
+            let prev_selected_completion = "";
 
-            // Stores the current request index, so that outdated requests get ignored
+            // Store the custom user url separately, so that it can be restored when required
+            let user_url = "";
+
+            // Stores the current request id, so that outdated requests get ignored
             let ajax_request_id = 0;
-
             let completion_items = [];
+
+            function update_dialog(api) {
+                let data = api.getData();
+
+                // Set the url either to the selected internal link or to the user link
+                if (prev_selected_completion != data.completions) {
+                    if (data.completions != "") {
+                        api.setData({ url: data.completions });
+                    } else {
+                        // restore the original user url
+                        api.setData({ url: user_url });
+                    }
+                }
+                prev_selected_completion = data.completions;
+
+                // Automatically update the text input to the url by default
+                data = api.getData();
+                if (data.url != data.text && prev_link_url == data.text) {
+                    api.setData({ text: data.url });
+                }
+                prev_link_url = data.url;
+
+                // Update the user link
+                if (data.url != data.completions) {
+                    user_url = data.url;
+                }
+
+                // Disable the submit button if either of url and text are empty
+                data = api.getData();
+                if (data.url.trim() && data.text.trim()) {
+                    api.enable("submit");
+                } else {
+                    api.disable("submit");
+                }
+
+                // make ajax new ajax request on user input
+                if (data.search != prev_search_text && data.search != "") {
+                    ajax_request_id += 1;
+                    getCompletions(data.search, ajax_request_id).then(([new_completions, request_id]) => {
+                        if (request_id != ajax_request_id) return;
+
+                        completion_items.length = 0;
+                        for (const completion of new_completions) {
+                            completion_items.push({
+                                text: completion.title,
+                                value: completion.url,
+                            });
+                        }
+
+                        // It seems like there is no better way to update the completion list 
+                        api.redial(dialog_config);
+                        api.setData(data);
+                        api.focus("search");
+                        prev_search_text = data.search;
+                        update_dialog(api);
+                    });
+                } else if (data.search == "" && prev_search_text != "") {
+                    // force an update so that the original user url can get restored
+                    completion_items.length = 0;
+                    api.redial(dialog_config);
+                    api.setData(data);
+                    api.focus("search");
+                    prev_search_text = data.search;
+                    update_dialog(api);
+                }
+            }
+
             const dialog_config = {
                 title: tinymceConfig.getAttribute("data-link-dialog-title-text"),
                 body: {
@@ -63,62 +140,43 @@
                     },
                 ],
                 initialData: {
-                    text: editor.selection.getContent()
+                    text: editor.selection.getContent({ format: "text" }),
+                    url: editor.selection.getStart().getAttribute("href") || ""
                 },
                 onSubmit: function (api) {
                     const data = api.getData();
-                    console.log(data);
 
                     let url = data.url;
                     const text = data.text || url;
 
-                    // Otherwise tinymce will append the url to the current page url
-                    if (url.toLowerCase().startsWith("www.")) {
-                        url = "https://" + url;
-                    }
-
                     if (data.url.trim() == "") {
                         return;
                     }
-                    editor.insertContent(`<a href=${url}>${text}</a>`);
                     api.close();
-                },
-                onChange: function (api) {
-                    let data = api.getData();
-                    // Automatically update the text button to the url by default
-                    if (data.url != data.text && old_link_url == data.text) {
-                        api.setData({ text: data.url });
-                    }
-                    old_link_url = data.url;
 
-                    // Disable the submit button if either of url and text are empty
-                    data = api.getData();
-                    if (data.url.trim() && data.text.trim()) {
-                        api.enable("submit");
-                    } else {
-                        api.disable("submit");
-                    }
-
-                    if (data.search != old_search_text) {
-                        getCompletions(data.search).then((completions) => {
-                            console.log("Got: ", completions);
-                            completion_items.push({"text": "text", "value": "value"});
-
-                            // It seems like there is no better way to update the completion list 
-                            api.redial(dialog_config);
-                            api.setData(data);
-                            api.focus("search");
+                    // Ask if the user wants to append https if that prefix is likely missing
+                    if (url.toLowerCase().startsWith("www.")) {
+                        editor.windowManager.confirm(tinymceConfig.getAttribute("data-link-dialog-confirm_https-text"), function (s) {
+                            if (s)
+                                url = "https://" + url;
+                            editor.insertContent(`<a href=${url}>${text}</a>`);
                         });
+                    } else {
+                        editor.insertContent(`<a href=${url}>${text}</a>`);
                     }
-                    old_search_text = data.search;
-                }
+                },
+                onChange: update_dialog
             };
 
             return editor.windowManager.open(dialog_config);
         };
 
+        editor.addShortcut("Meta+K", tinymceConfig.getAttribute("data-link-menu-text"), open_dialog);
+
         editor.ui.registry.addMenuItem('add_link', {
-            text: tinymceConfig.getAttribute("data-link-add-text"),
+            text: tinymceConfig.getAttribute("data-link-menu-text"),
+            icon: "link",
+            shortcut: "Meta+K",
             onAction: open_dialog,
         });
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-05 15:33+0000\n"
+"POT-Creation-Date: 2021-07-09 15:18+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Integreat <info@integreat-app.de>\n"
 "Language-Team: Integreat <info@integreat-app.de>\n"
@@ -2272,7 +2272,7 @@ msgstr ""
 msgid "thumbnail URL"
 msgstr "Vorschaubild-URL"
 
-#: models/offers/offer_template.py:30 templates/_tinymce_config.html:36
+#: models/offers/offer_template.py:30 templates/_tinymce_config.html:38
 #: templates/linkcheck/links_by_filter.html:39
 #: templates/offer_templates/offer_template_list.html:22
 #: views/media/media_context_mixin.py:56
@@ -2901,7 +2901,7 @@ msgid "Contents"
 msgstr "Inhalte"
 
 #: templates/_base.html:133 templates/_base.html:275
-#: templates/_tinymce_config.html:42 views/media/media_context_mixin.py:31
+#: templates/_tinymce_config.html:44 views/media/media_context_mixin.py:31
 msgid "Media Library"
 msgstr "Medienbibliothek"
 
@@ -3055,23 +3055,31 @@ msgstr "Speichern"
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: templates/_tinymce_config.html:34
-msgid "Add Link..."
-msgstr "Link hinzufügen..."
-
 #: templates/_tinymce_config.html:35
+msgid "Link..."
+msgstr "Link..."
+
+#: templates/_tinymce_config.html:36
 msgid "Add Link"
 msgstr "Link hinzufügen"
 
 #: templates/_tinymce_config.html:37
+msgid ""
+"The URL you entered seems to be an external link. Do you want to add the "
+"required https:// prefix?"
+msgstr ""
+"Die eingegebene URL scheint auf eine externe Seite zu verweisen. Soll das "
+"notwendige Präfix https:// hinzugefügt werden?"
+
+#: templates/_tinymce_config.html:39
 msgid "Text to display"
 msgstr "Anzuzeigender Text"
 
-#: templates/_tinymce_config.html:38
+#: templates/_tinymce_config.html:40
 msgid "Or link to existing content"
 msgstr "Oder auf bestehende Inhalte verlinken"
 
-#: templates/_tinymce_config.html:43
+#: templates/_tinymce_config.html:45
 msgid "Media Library..."
 msgstr "Medienbibliothek..."
 

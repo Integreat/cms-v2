@@ -86,11 +86,11 @@ window.addEventListener("load", () => {
         },
         insert: {
           title: "Insert",
-          items: "openmediacenter add_link link image media "
+          items: "openmediacenter add_link image media "
         }
       },
       link_title: false,
-      contextmenu: "paste link",
+      contextmenu: "paste add_link",
       autosave_interval: "120s",
       forced_root_block: false,
       plugins:
