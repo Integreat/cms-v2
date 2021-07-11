@@ -1,11 +1,21 @@
+import { getCsrfToken } from "../../utils/csrf-token";
+
 (function () {
     'use strict'
 
     const tinymceConfig = document.getElementById("tinymce-config-options");
 
     async function getCompletions(query, id) {
-        const url = `${tinymceConfig.getAttribute("data-link-ajax-url")}?query=${encodeURIComponent(query)}`;
-        const response = await fetch(url);
+        const url = tinymceConfig.getAttribute("data-link-ajax-url");
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": getCsrfToken(),
+            },
+            body: JSON.stringify({
+                query_string: query
+            })
+        });
         if (response.status != 200) {
             return [];
         }

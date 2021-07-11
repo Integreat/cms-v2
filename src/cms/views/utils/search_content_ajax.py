@@ -1,16 +1,22 @@
 import re
+import logging
+import json
 
 from django.contrib.auth.decorators import login_required
 from django.http.response import JsonResponse
+from django.views.decorators.http import require_POST
 
 from backend.settings import WEBAPP_URL
 from ...decorators import region_permission_required
 from ...models.regions.region import Region
 
+logger = logging.getLogger(__name__)
+
 # The maximum number of results returned by `search_content_ajax`
 MAX_RESULT_COUNT = 20
 
 
+@require_POST
 @login_required
 @region_permission_required
 # pylint: disable=unused-argument
@@ -59,7 +65,12 @@ def search_content_ajax(request, region_slug, language_slug):
                 yield (1, object_translation)
 
     region = Region.get_current_region(request)
-    query = re.escape(request.GET.get("query"))
+    raw_query = json.loads(request.body.decode("utf-8"))["query_string"]
+    query = re.escape(raw_query)
+
+    logger.debug(
+        'Ajax call: Live search for pois, events and pages with query "%r"', raw_query
+    )
 
     results = []
 
