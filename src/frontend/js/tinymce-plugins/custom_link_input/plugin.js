@@ -40,7 +40,15 @@ import { getCsrfToken } from "../../utils/csrf-token";
     }
 
 
-    tinymce.PluginManager.add('custom_link_input', function (editor, url) {
+    tinymce.PluginManager.add('custom_link_input', function (editor, _url) {
+        function isAnchor(node) {
+            return node.nodeName.toLowerCase() === 'a' && node.href;
+        }
+        function getAnchor() {
+            var node = editor.selection.getNode();
+            return isAnchor(node) ? node : null;
+        };
+
         const open_dialog = function () {
             let prev_search_text = "";
             let prev_link_url = "";
@@ -165,7 +173,7 @@ import { getCsrfToken } from "../../utils/csrf-token";
                     },
                 ],
                 initialData: {
-                    text: editor.selection.getContent({ format: "text" }),
+                    text: getAnchor() ? getAnchor().innerText : editor.selection.getContent({ format: "text" }),
                     url: editor.selection.getStart().getAttribute("href") || ""
                 },
                 onSubmit: function (api) {
@@ -179,7 +187,20 @@ import { getCsrfToken } from "../../utils/csrf-token";
                     }
                     api.close();
 
-                    check_url_https(editor, url, (real_url) => editor.insertContent(`<a href=${real_url}>${text}</a>`));
+                    check_url_https(editor, url, (real_url) => {
+                        // Either insert a new link or update the existing one
+                        let anchor = getAnchor();
+                        if (!anchor) {
+                            editor.insertContent(`<a href=${real_url}>${text}</a>`)
+                        } else {
+                            anchor.textContent = text;
+                            anchor.setAttribute('href', real_url);
+                            // I am not sure why the editor uses this data-mce-href attribute, but it seems to be
+                            // required.
+                            anchor.setAttribute('data-mce-href', real_url);
+
+                        }
+                    });
                 },
                 onChange: update_dialog
             };
@@ -195,14 +216,6 @@ import { getCsrfToken } from "../../utils/csrf-token";
             shortcut: "Meta+K",
             onAction: open_dialog,
         });
-
-        function isAnchor(node) {
-            return node.nodeName.toLowerCase() === 'a' && node.href;
-        }
-        var getAnchor = function () {
-            var node = editor.selection.getNode();
-            return isAnchor(node) ? node : null;
-        };
 
         // This form opens when a link is current selected with the cursor
         editor.ui.registry.addContextForm("link_context_form", {
