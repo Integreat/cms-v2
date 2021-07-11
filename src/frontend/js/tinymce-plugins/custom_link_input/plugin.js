@@ -25,7 +25,7 @@ import { getCsrfToken } from "../../utils/csrf-token";
     }
 
     // Ask if the user wants to append https if that prefix is likely missing
-    function check_url_https(editor, url, handler) {
+    function checkUrlHttps(editor, url, handler) {
         if (url.toLowerCase().startsWith("www.")) {
             editor.windowManager.confirm(tinymceConfig.getAttribute("data-link-dialog-confirm_https-text"), function (s) {
                 if (s)
@@ -39,6 +39,13 @@ import { getCsrfToken } from "../../utils/csrf-token";
         }
     }
 
+    function updateLink(editor, anchorElm, text, linkAttrs) {
+        anchorElm.textContent = text;
+
+        editor.dom.setAttribs(anchorElm, linkAttrs);
+        editor.selection.select(anchorElm);
+    };
+
 
     tinymce.PluginManager.add('custom_link_input', function (editor, _url) {
         function isAnchor(node) {
@@ -49,7 +56,7 @@ import { getCsrfToken } from "../../utils/csrf-token";
             return isAnchor(node) ? node : null;
         };
 
-        const open_dialog = function () {
+        const openDialog = function () {
             let prev_search_text = "";
             let prev_link_url = "";
             let prev_selected_completion = "";
@@ -61,7 +68,7 @@ import { getCsrfToken } from "../../utils/csrf-token";
             let ajax_request_id = 0;
             let completion_items = [];
 
-            function update_dialog(api) {
+            function updateDialog(api) {
                 let data = api.getData();
 
                 // Set the url either to the selected internal link or to the user link
@@ -114,7 +121,7 @@ import { getCsrfToken } from "../../utils/csrf-token";
                         api.setData(data);
                         api.focus("search");
                         prev_search_text = data.search;
-                        update_dialog(api);
+                        updateDialog(api);
                     });
                 } else if (data.search == "" && prev_search_text != "") {
                     // force an update so that the original user url can get restored
@@ -123,7 +130,7 @@ import { getCsrfToken } from "../../utils/csrf-token";
                     api.setData(data);
                     api.focus("search");
                     prev_search_text = data.search;
-                    update_dialog(api);
+                    updateDialog(api);
                 }
             }
 
@@ -187,34 +194,35 @@ import { getCsrfToken } from "../../utils/csrf-token";
                     }
                     api.close();
 
-                    check_url_https(editor, url, (real_url) => {
+                    checkUrlHttps(editor, url, (real_url) => {
                         // Either insert a new link or update the existing one
                         let anchor = getAnchor();
                         if (!anchor) {
                             editor.insertContent(`<a href=${real_url}>${text}</a>`)
                         } else {
+                            updateLink(editor, anchor, text, {'href': real_url});
                             anchor.textContent = text;
-                            anchor.setAttribute('href', real_url);
-                            // I am not sure why the editor uses this data-mce-href attribute, but it seems to be
-                            // required.
-                            anchor.setAttribute('data-mce-href', real_url);
+                            // anchor.setAttribute('href', real_url);
+                            // // I am not sure why the editor uses this data-mce-href attribute, but it seems to be
+                            // // required.
+                            // anchor.setAttribute('data-mce-href', real_url);
 
                         }
                     });
                 },
-                onChange: update_dialog
+                onChange: updateDialog
             };
 
             return editor.windowManager.open(dialog_config);
         };
 
-        editor.addShortcut("Meta+K", tinymceConfig.getAttribute("data-link-menu-text"), open_dialog);
+        editor.addShortcut("Meta+K", tinymceConfig.getAttribute("data-link-menu-text"), openDialog);
 
         editor.ui.registry.addMenuItem('add_link', {
             text: tinymceConfig.getAttribute("data-link-menu-text"),
             icon: "link",
             shortcut: "Meta+K",
-            onAction: open_dialog,
+            onAction: openDialog,
         });
 
         // This form opens when a link is current selected with the cursor
@@ -242,11 +250,9 @@ import { getCsrfToken } from "../../utils/csrf-token";
                     },
                     onAction: (formApi) => {
                         let url = formApi.getValue();
-                        url = check_url_https(editor, url, (real_url) => {
-                            getAnchor().setAttribute('href', real_url);
-                            // I am not sure why the editor uses this data-mce-href attribute, but it seems to be
-                            // required.
-                            getAnchor().setAttribute('data-mce-href', real_url);
+                        checkUrlHttps(editor, url, (real_url) => {
+                            let anchor = getAnchor();
+                            updateLink(editor, anchor, anchor.innerText, {'href': real_url});
                             formApi.hide();
                         });
 
