@@ -3,7 +3,7 @@ import logging
 import json
 
 from django.contrib.auth.decorators import login_required
-from django.http.response import JsonResponse
+from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 
 from backend.settings import WEBAPP_URL
@@ -32,7 +32,7 @@ def search_content_ajax(request, region_slug, language_slug):
     :param language_slug: language slug
     :type language_slug: str
     :return: Json object containing all matching elements, of shape {title: str, url: str, type: str}
-    :rtype: ~django.http.response.JsonResponse
+    :rtype: ~django.http.JsonResponse
     """
 
     def format_object_translation(object_translation, typ):
