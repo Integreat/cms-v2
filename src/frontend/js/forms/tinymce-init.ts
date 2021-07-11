@@ -94,7 +94,7 @@ window.addEventListener("load", () => {
       autosave_interval: "120s",
       forced_root_block: false,
       plugins:
-        "code paste fullscreen autosave link preview media image lists directionality wordcount",
+        "code paste fullscreen autosave preview media image lists directionality wordcount",
       external_plugins: {
         autolink_tel: tinymceConfig.getAttribute("data-custom-plugins"),
         mediacenter: tinymceConfig.getAttribute("data-custom-plugins"),

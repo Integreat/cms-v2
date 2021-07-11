@@ -14,6 +14,21 @@
         return [data.data, id];
     }
 
+    // Ask if the user wants to append https if that prefix is likely missing
+    function check_url_https(editor, url, handler) {
+        if (url.toLowerCase().startsWith("www.")) {
+            editor.windowManager.confirm(tinymceConfig.getAttribute("data-link-dialog-confirm_https-text"), function (s) {
+                if (s)
+                    handler("https://" + url);
+                else {
+                    handler(url);
+                }
+            });
+        } else {
+            handler(url);
+        }
+    }
+
 
     tinymce.PluginManager.add('custom_link_input', function (editor, url) {
         const open_dialog = function () {
@@ -154,16 +169,7 @@
                     }
                     api.close();
 
-                    // Ask if the user wants to append https if that prefix is likely missing
-                    if (url.toLowerCase().startsWith("www.")) {
-                        editor.windowManager.confirm(tinymceConfig.getAttribute("data-link-dialog-confirm_https-text"), function (s) {
-                            if (s)
-                                url = "https://" + url;
-                            editor.insertContent(`<a href=${url}>${text}</a>`);
-                        });
-                    } else {
-                        editor.insertContent(`<a href=${url}>${text}</a>`);
-                    }
+                    check_url_https(editor, url, (real_url) => editor.insertContent(`<a href=${real_url}>${text}</a>`));
                 },
                 onChange: update_dialog
             };
@@ -178,6 +184,77 @@
             icon: "link",
             shortcut: "Meta+K",
             onAction: open_dialog,
+        });
+
+        function isAnchor(node) {
+            return node.nodeName.toLowerCase() === 'a' && node.href;
+        }
+        var getAnchor = function () {
+            var node = editor.selection.getNode();
+            return isAnchor(node) ? node : null;
+        };
+
+        // This form opens when a link is current selected with the cursor
+        editor.ui.registry.addContextForm("link_context_form", {
+            predicate: isAnchor,
+            initValue: function () {
+                var elm = getAnchor();
+                return !!elm ? elm.href : '';
+            },
+            position: "node",
+            commands: [
+                {
+                    type: 'contextformbutton',
+                    icon: "link",
+                    tooltip: tinymceConfig.getAttribute("data-update-text"),
+                    primary: true,
+                    onSetup: function (buttonApi) {
+                        let nodeChangeHandler = function () {
+                            buttonApi.setDisabled(editor.readonly);
+                        };
+                        editor.on('nodechange', nodeChangeHandler);
+                        return function () {
+                            editor.off('nodechange', nodeChangeHandler);
+                        }
+                    },
+                    onAction: (formApi) => {
+                        let url = formApi.getValue();
+                        url = check_url_https(editor, url, (real_url) => {
+                            getAnchor().setAttribute('href', real_url);
+                            // I am not sure why the editor uses this data-mce-href attribute, but it seems to be
+                            // required.
+                            getAnchor().setAttribute('data-mce-href', real_url);
+                            formApi.hide();
+                        });
+
+                    }
+                },
+                {
+                    type: 'contextformbutton',
+                    icon: 'unlink',
+                    tooltip: tinymceConfig.getAttribute("data-link-remove-text"),
+                    active: false,
+                    onAction: (formApi) => {
+                        let elm = getAnchor();
+                        if (!!elm) {
+                            elm.replaceWith(elm.innerHTML)
+                        }
+                        formApi.hide();
+                    }
+                },
+                {
+                    type: 'contextformbutton',
+                    icon: 'new-tab',
+                    tooltip: tinymceConfig.getAttribute("data-link-open-text"),
+                    active: false,
+                    onAction: (formApi) => {
+                        let elm = getAnchor();
+                        if (!!elm) {
+                            window.open(elm.getAttribute('href'), '_blank');
+                        }
+                    }
+                }
+            ]
         });
 
         return {};
