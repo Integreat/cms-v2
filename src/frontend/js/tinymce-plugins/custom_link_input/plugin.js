@@ -24,19 +24,14 @@ import { getCsrfToken } from "../../utils/csrf-token";
         return [data.data, id];
     }
 
-    // Ask if the user wants to append https if that prefix is likely missing
-    function checkUrlHttps(editor, url, handler) {
-        if (url.toLowerCase().startsWith("www.")) {
-            editor.windowManager.confirm(tinymceConfig.getAttribute("data-link-dialog-confirm_https-text"), function (s) {
-                if (s)
-                    handler("https://" + url);
-                else {
-                    handler(url);
-                }
-            });
-        } else {
-            handler(url);
+    // Checks if the url is likely missing the https:// prefix and add it if that is the case
+    function checkUrlHttps(url) {
+        // This regex matches domains without protocol (strings which contain a dot without a preceding colon or slash)
+        const re = new RegExp("^[^:/]+[.].+");
+        if (re.test(url)) {
+            return "https://" + url;
         }
+        return url;
     }
 
     function updateLink(editor, anchorElm, text, linkAttrs) {
@@ -185,7 +180,6 @@ import { getCsrfToken } from "../../utils/csrf-token";
                 },
                 onSubmit: function (api) {
                     const data = api.getData();
-
                     let url = data.url;
                     const text = data.text || url;
 
@@ -194,21 +188,15 @@ import { getCsrfToken } from "../../utils/csrf-token";
                     }
                     api.close();
 
-                    checkUrlHttps(editor, url, (real_url) => {
-                        // Either insert a new link or update the existing one
-                        let anchor = getAnchor();
-                        if (!anchor) {
-                            editor.insertContent(`<a href=${real_url}>${text}</a>`)
-                        } else {
-                            updateLink(editor, anchor, text, {'href': real_url});
-                            anchor.textContent = text;
-                            // anchor.setAttribute('href', real_url);
-                            // // I am not sure why the editor uses this data-mce-href attribute, but it seems to be
-                            // // required.
-                            // anchor.setAttribute('data-mce-href', real_url);
-
-                        }
-                    });
+                    let real_url = checkUrlHttps(url);
+                    // Either insert a new link or update the existing one
+                    let anchor = getAnchor();
+                    if (!anchor) {
+                        editor.insertContent(`<a href=${real_url}>${text}</a>`)
+                    } else {
+                        updateLink(editor, anchor, text, { 'href': real_url });
+                    }
+                    
                 },
                 onChange: updateDialog
             };
@@ -249,13 +237,11 @@ import { getCsrfToken } from "../../utils/csrf-token";
                         }
                     },
                     onAction: (formApi) => {
-                        let url = formApi.getValue();
-                        checkUrlHttps(editor, url, (real_url) => {
-                            let anchor = getAnchor();
-                            updateLink(editor, anchor, anchor.innerText, {'href': real_url});
-                            formApi.hide();
-                        });
-
+                        const url = formApi.getValue();
+                        const real_url = checkUrlHttps(url);
+                        const anchor = getAnchor();
+                        updateLink(editor, anchor, anchor.innerText, { 'href': real_url });
+                        formApi.hide();
                     }
                 },
                 {

@@ -16,6 +16,54 @@ logger = logging.getLogger(__name__)
 MAX_RESULT_COUNT = 20
 
 
+def format_object_translation(object_translation, typ):
+    """
+    Formats the [poi/event/page]-translation as json
+
+    :param object_translation: A translation object which has a title and a permalink
+    :type object_translation: ~src.cms.models.events.event.Event or ~src.cms.models.pages.page.Page or ~src.cms.models.pois.poi.POI
+    :param typ: The type of this object
+    :type typ: str
+    :return: A dictionary with the title, url and type of the translation object
+    :rtype: dict
+    """
+    return {
+        "title": object_translation.title,
+        "url": f"{WEBAPP_URL}/{object_translation.permalink}",
+        "type": typ,
+    }
+
+
+def find_objects(object_manager, query, language_slug):
+    """
+    Filters all object translations from ``object_manager`` of this language
+    that match ``query`` and returns them and their ranking
+
+    :param object_manager: The manager for a specific model
+    :type object_manager: ~django.db.models.manager.Manager
+    :param query: The query string used for filtering the objects
+    :type query: str
+    :param language_slug: The language slug
+    :type language_slug: str
+    :return: an iterator over all objects that match query and their search priority
+    :rtype: Iterator[:class:`tuple`]
+    """
+    for obj in object_manager.all():
+        if obj.archived:
+            continue
+        object_translation = obj.get_public_translation(language_slug)
+        if not object_translation:
+            continue
+
+        title = object_translation.title
+        slug = object_translation.slug
+
+        if re.search(query, title, re.IGNORECASE):
+            yield (2, object_translation)
+        elif re.search(query, slug, re.IGNORECASE):
+            yield (2, object_translation)
+
+
 @require_POST
 @login_required
 @region_permission_required
@@ -35,35 +83,6 @@ def search_content_ajax(request, region_slug, language_slug):
     :rtype: ~django.http.JsonResponse
     """
 
-    def format_object_translation(object_translation, typ):
-        """Formats the [poi/event/page]-translation as json"""
-        return {
-            "title": object_translation.title,
-            "url": f"{WEBAPP_URL}/{object_translation.permalink}",
-            "type": typ,
-        }
-
-    def find_objects(object_manager, query, language_slug, body_name):
-        """Filters all object translations from ``object_manager`` of this language
-        that match ``query`` and returns them and their ranking"""
-        for obj in object_manager.all():
-            if obj.archived:
-                continue
-            object_translation = obj.get_public_translation(language_slug)
-            if not object_translation:
-                continue
-
-            title = object_translation.title
-            slug = object_translation.slug
-            body = getattr(object_translation, body_name)
-
-            if re.search(query, title, re.IGNORECASE):
-                yield (2, object_translation)
-            elif re.search(query, slug, re.IGNORECASE):
-                yield (2, object_translation)
-            elif re.search(query, body, re.IGNORECASE):
-                yield (1, object_translation)
-
     region = Region.get_current_region(request)
     raw_query = json.loads(request.body.decode("utf-8"))["query_string"]
     query = re.escape(raw_query)
@@ -77,24 +96,20 @@ def search_content_ajax(request, region_slug, language_slug):
     user = request.user
     if user.has_perm("cms.view_event"):
         results.extend(
-            (prio, format_object_translation(i, "event"))
-            for (prio, i) in find_objects(
-                region.events, query, language_slug, "description"
-            )
+            (prio, format_object_translation(obj, "event"))
+            for (prio, obj) in find_objects(region.events, query, language_slug)
         )
 
     if user.has_perm("cms.view_page"):
         results.extend(
-            (prio, format_object_translation(i, "page"))
-            for (prio, i) in find_objects(region.pages, query, language_slug, "text")
+            (prio, format_object_translation(obj, "page"))
+            for (prio, obj) in find_objects(region.pages, query, language_slug)
         )
 
     if user.has_perm("cms.view_poi"):
         results.extend(
-            (prio, format_object_translation(i, "poi"))
-            for (prio, i) in find_objects(
-                region.pois, query, language_slug, "description"
-            )
+            (prio, format_object_translation(obj, "poi"))
+            for (prio, obj) in find_objects(region.pois, query, language_slug)
         )
 
     # sort first by highest priority and then alphabetically by title

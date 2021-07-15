@@ -103,6 +103,7 @@ window.addEventListener("load", () => {
       link_default_protocol: "https",
       target_list: false,
       default_link_target: '',
+      document_base_url: tinymceConfig.getAttribute("data-webapp-url"),
       relative_urls: false,
       remove_script_host: false,
       branding: false,

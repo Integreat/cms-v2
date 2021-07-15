@@ -1,5 +1,6 @@
 {% load i18n %}
 {% load static %}
+{% load settings_tags %}
 
 {% get_current_language as LANGUAGE_CODE %}
 
@@ -13,6 +14,7 @@
 
 <div
         id="tinymce-config-options"
+        data-webapp-url="{% get_webapp_url %}"
         data-language="{{ LANGUAGE_CODE|slice:'0:2' }}"
         data-directionality="{% if right_to_left %}rtl{% else %}ltr{% endif %}"
         data-no-translate-tooltip="{% trans 'Do not translate the selected text.' %}"
@@ -37,7 +39,6 @@
         data-link-remove-text="{% trans 'Remove link' %}"
         data-link-open-text="{% trans 'Open link' %}"
         data-link-dialog-title-text="{% trans 'Add Link' %}"
-        data-link-dialog-confirm_https-text="{% trans 'The URL you entered seems to be an external link. Do you want to add the required https:// prefix?' %}"
         data-link-dialog-url-text="{% trans 'URL' %}"
         data-link-dialog-text-text="{% trans 'Text to display' %}"
         data-link-dialog-internal_link-text="{% trans 'Or link to existing content' %}"

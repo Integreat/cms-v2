@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-11 16:18+0000\n"
+"POT-Creation-Date: 2021-07-15 14:01+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Integreat <info@integreat-app.de>\n"
 "Language-Team: Integreat <info@integreat-app.de>\n"
@@ -2272,7 +2272,7 @@ msgstr ""
 msgid "thumbnail URL"
 msgstr "Vorschaubild-URL"
 
-#: models/offers/offer_template.py:30 templates/_tinymce_config.html:41
+#: models/offers/offer_template.py:30 templates/_tinymce_config.html:42
 #: templates/linkcheck/links_by_filter.html:39
 #: templates/offer_templates/offer_template_list.html:22
 #: views/media/media_context_mixin.py:56
@@ -2901,7 +2901,7 @@ msgid "Contents"
 msgstr "Inhalte"
 
 #: templates/_base.html:133 templates/_base.html:275
-#: templates/_tinymce_config.html:47 views/media/media_context_mixin.py:31
+#: templates/_tinymce_config.html:48 views/media/media_context_mixin.py:31
 msgid "Media Library"
 msgstr "Medienbibliothek"
 
@@ -3013,85 +3013,77 @@ msgstr "Angebots-Vorlagen"
 msgid "Integreat Editorial System"
 msgstr "Integreat Redaktionssystem"
 
-#: templates/_tinymce_config.html:18
+#: templates/_tinymce_config.html:20
 msgid "Do not translate the selected text."
 msgstr "Der markierte Text wird nicht übersetzt."
 
-#: templates/_tinymce_config.html:19
+#: templates/_tinymce_config.html:21
 msgid "Do not translate"
 msgstr "Nicht übersetzen"
 
-#: templates/_tinymce_config.html:20
+#: templates/_tinymce_config.html:22
 #: templates/events/_event_filter_form.html:34
 msgid "Location"
 msgstr "Ort"
 
-#: templates/_tinymce_config.html:22
+#: templates/_tinymce_config.html:24
 msgid "Link"
 msgstr "Link"
 
-#: templates/_tinymce_config.html:24
+#: templates/_tinymce_config.html:26
 msgid "Email"
 msgstr "Email"
 
-#: templates/_tinymce_config.html:26
+#: templates/_tinymce_config.html:28
 msgid "Phone"
 msgstr "Telefon"
 
-#: templates/_tinymce_config.html:28
+#: templates/_tinymce_config.html:30
 msgid "Opening Hours"
 msgstr "Öffnungszeiten"
 
-#: templates/_tinymce_config.html:30
+#: templates/_tinymce_config.html:32
 msgid "Hint"
 msgstr "Tipp"
 
-#: templates/_tinymce_config.html:32 templates/pages/page_form.html:45
+#: templates/_tinymce_config.html:34 templates/pages/page_form.html:45
 msgid "Update"
 msgstr "Aktualisieren"
 
-#: templates/_tinymce_config.html:33 views/media/media_context_mixin.py:52
+#: templates/_tinymce_config.html:35 views/media/media_context_mixin.py:52
 msgid "Submit"
 msgstr "Speichern"
 
-#: templates/_tinymce_config.html:34
+#: templates/_tinymce_config.html:36
 #: templates/generic_confirmation_dialog.html:22
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: templates/_tinymce_config.html:36
+#: templates/_tinymce_config.html:38
 msgid "Link..."
 msgstr "Link..."
 
-#: templates/_tinymce_config.html:37
+#: templates/_tinymce_config.html:39
 msgid "Remove link"
 msgstr "Link entfernen"
 
-#: templates/_tinymce_config.html:38
+#: templates/_tinymce_config.html:40
 msgid "Open link"
 msgstr "Link öffnen"
 
-#: templates/_tinymce_config.html:39
+#: templates/_tinymce_config.html:41
 msgid "Add Link"
 msgstr "Link hinzufügen"
 
-#: templates/_tinymce_config.html:40
-msgid ""
-"The URL you entered seems to be an external link. Do you want to add the "
-"required https:// prefix?"
-msgstr ""
-"Die eingegebene URL scheint auf eine externe Seite zu verweisen. Soll das "
-"notwendige Präfix https:// hinzugefügt werden?"
-
-#: templates/_tinymce_config.html:42
+#: templates/_tinymce_config.html:43
 msgid "Text to display"
 msgstr "Anzuzeigender Text"
 
-#: templates/_tinymce_config.html:43
+#: templates/_tinymce_config.html:44
 msgid "Or link to existing content"
 msgstr "Oder auf bestehende Inhalte verlinken"
 
-#: templates/_tinymce_config.html:48
+#: templates/_tinymce_config.html:49
 msgid "Media Library..."
 msgstr "Medienbibliothek..."
 
@@ -5973,6 +5965,13 @@ msgid ""
 msgstr ""
 "Ein Benutzer muss entweder Mitarbeiter/Super-Administrator sein, oder "
 "mindestens einer Region zugewiesen sein."
+
+#~ msgid ""
+#~ "The URL you entered seems to be an external link. Do you want to add the "
+#~ "required https:// prefix?"
+#~ msgstr ""
+#~ "Die eingegebene URL scheint auf eine externe Seite zu verweisen. Soll das "
+#~ "notwendige Präfix https:// hinzugefügt werden?"
 
 #~ msgid ""
 #~ "You don't have the permission to edit this page, but you can propose "
