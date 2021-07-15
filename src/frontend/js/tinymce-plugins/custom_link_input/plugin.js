@@ -52,41 +52,61 @@ import { getCsrfToken } from "../../utils/csrf-token";
         };
 
         const openDialog = function () {
+            const initial_text = getAnchor() ? getAnchor().innerText : editor.selection.getContent({ format: "text" });
+            const initial_url = editor.selection.getStart().getAttribute("href") || "";
+
             let prev_search_text = "";
-            let prev_link_url = "";
+            let prev_link_url = initial_url;
             let prev_selected_completion = "";
 
-            // Store the custom user url separately, so that it can be restored when required
-            let user_url = "";
+            // Store the custom user data separately, so that they can be restored when required
+            let user_data = { url: "", text: "" };
 
             // Stores the current request id, so that outdated requests get ignored
             let ajax_request_id = 0;
             let completion_items = [];
+            let current_completion_text = "";
 
             function updateDialog(api) {
                 let data = api.getData();
 
-                // Set the url either to the selected internal link or to the user link
+                let url_changed_by_search = false;
+                // Check if the selected completion changed
                 if (prev_selected_completion != data.completions) {
+                    // find the correct thext currently shown in the completion items box
+                    if (completion_items.length > 0)
+                        current_completion_text = completion_items.find((completion) => completion.value == data.completions).text;
+                    else
+                        current_completion_text = "";
+
+                    // Set the url either to the selected internal link or to the user link
                     if (data.completions != "") {
+                        url_changed_by_search = true;
                         api.setData({ url: data.completions });
+                        // if the text is not defined by the user, set it to the current completion item
+                        if (!data.text || user_data.text != data.text) {
+                            api.setData({ text: current_completion_text });
+                        }
                     } else {
-                        // restore the original user url
-                        api.setData({ url: user_url });
+                        // restore the original user data
+                        api.setData({ url: user_data.url, text: user_data.text });
                     }
                 }
                 prev_selected_completion = data.completions;
 
                 // Automatically update the text input to the url by default
                 data = api.getData();
-                if (data.url != data.text && prev_link_url == data.text) {
+                if (!url_changed_by_search && data.url != data.text && prev_link_url != data.url && (data.text != user_data.text || !data.text)) {
                     api.setData({ text: data.url });
                 }
                 prev_link_url = data.url;
 
                 // Update the user link
                 if (data.url != data.completions) {
-                    user_url = data.url;
+                    user_data.url = data.url;
+                }
+                if (data.text != data.url && data.text != current_completion_text) {
+                    user_data.text = data.text;
                 }
 
                 // Disable the submit button if either of url and text are empty
@@ -97,7 +117,7 @@ import { getCsrfToken } from "../../utils/csrf-token";
                     api.disable("submit");
                 }
 
-                // make ajax new ajax request on user input
+                // make new ajax request on user input
                 if (data.search != prev_search_text && data.search != "") {
                     ajax_request_id += 1;
                     getCompletions(data.search, ajax_request_id).then(([new_completions, request_id]) => {
@@ -175,8 +195,8 @@ import { getCsrfToken } from "../../utils/csrf-token";
                     },
                 ],
                 initialData: {
-                    text: getAnchor() ? getAnchor().innerText : editor.selection.getContent({ format: "text" }),
-                    url: editor.selection.getStart().getAttribute("href") || ""
+                    text: initial_text,
+                    url: initial_url,
                 },
                 onSubmit: function (api) {
                     const data = api.getData();
@@ -196,7 +216,7 @@ import { getCsrfToken } from "../../utils/csrf-token";
                     } else {
                         updateLink(editor, anchor, text, { 'href': real_url });
                     }
-                    
+
                 },
                 onChange: updateDialog
             };
