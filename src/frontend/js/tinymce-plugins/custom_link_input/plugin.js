@@ -64,7 +64,8 @@ import { getCsrfToken } from "../../utils/csrf-token";
 
             // Stores the current request id, so that outdated requests get ignored
             let ajax_request_id = 0;
-            let completion_items = [];
+            const default_completion_item = { text: "- no results -", value: "" };
+            let completion_items = [default_completion_item];
             let current_completion_text = "";
 
             function updateDialog(api) {
@@ -74,10 +75,17 @@ import { getCsrfToken } from "../../utils/csrf-token";
                 // Check if the selected completion changed
                 if (prev_selected_completion != data.completions) {
                     // find the correct thext currently shown in the completion items box
-                    if (completion_items.length > 0)
-                        current_completion_text = completion_items.find((completion) => completion.value == data.completions).text;
-                    else
+                    if (completion_items.length > 0) {
+                        const current_completion = completion_items.find((completion) => completion.value == data.completions);
+                        // Don't set the completion text to `- no results -`
+                        if (current_completion.value != "") {
+                            current_completion_text = current_completion.text;
+                        } else {
+                            current_completion_text = "";
+                        }
+                    } else {
                         current_completion_text = "";
+                    }
 
                     // Set the url either to the selected internal link or to the user link
                     if (data.completions != "") {
@@ -131,20 +139,34 @@ import { getCsrfToken } from "../../utils/csrf-token";
                             });
                         }
 
+                        let completions_disabled = false;
+                        if (completion_items.length == 0) {
+                            completions_disabled = true;
+                            completion_items.push(default_completion_item);
+                        }
+
                         // It seems like there is no better way to update the completion list 
                         api.redial(dialog_config);
                         api.setData(data);
                         api.focus("search");
                         prev_search_text = data.search;
+
+                        if (completions_disabled)
+                            api.disable("completions");
+                        else
+                            api.enable("completions");
+
                         updateDialog(api);
                     });
                 } else if (data.search == "" && prev_search_text != "") {
                     // force an update so that the original user url can get restored
                     completion_items.length = 0;
+                    completion_items.push(default_completion_item);
                     api.redial(dialog_config);
                     api.setData(data);
                     api.focus("search");
                     prev_search_text = data.search;
+                    api.disable("completions");
                     updateDialog(api);
                 }
             }
@@ -175,7 +197,8 @@ import { getCsrfToken } from "../../utils/csrf-token";
                                 {
                                     type: "selectbox",
                                     name: "completions",
-                                    items: completion_items
+                                    items: completion_items,
+                                    disabled: true,
                                 }
                             ]
                         }
