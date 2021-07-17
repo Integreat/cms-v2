@@ -80,11 +80,6 @@ class PageTranslationForm(CustomContentModelForm):
         if not {"slug", "title", "text"}.isdisjoint(self.changed_data):
             self.instance.version += 1
             self.instance.pk = None
-            if self.instance.status == status.AUTO:
-                self.instance.status = status.DRAFT
-        else:
-            if self.instance.status == status.AUTO:
-                self.instance.status = status.PUBLIC
 
         # Save CustomModelForm
         return super().save(commit=commit)
