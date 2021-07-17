@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-06 06:50+0000\n"
+"POT-Creation-Date: 2021-07-17 11:36+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Integreat <info@integreat-app.de>\n"
 "Language-Team: Integreat <info@integreat-app.de>\n"
@@ -1283,17 +1283,21 @@ msgstr "App-Team"
 msgid "Promo team"
 msgstr "Promo-Team"
 
-#: constants/status.py:16
+#: constants/status.py:18
 msgid "Draft"
 msgstr "Entwurf"
 
-#: constants/status.py:17
+#: constants/status.py:19
 msgid "Pending Review"
 msgstr "Review ausstehend"
 
-#: constants/status.py:18
+#: constants/status.py:20
 msgid "Published"
 msgstr "Veröffentlicht"
+
+#: constants/status.py:21
+msgid "Auto Save"
+msgstr "Automatisch Speichern"
 
 #: constants/text_directions.py:14
 msgid "Left to right"
