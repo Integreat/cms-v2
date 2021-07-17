@@ -1297,7 +1297,7 @@ msgstr "Veröffentlicht"
 
 #: constants/status.py:21
 msgid "Auto Save"
-msgstr "Automatisch Speichern"
+msgstr "Automatische Speicherung"
 
 #: constants/text_directions.py:14
 msgid "Left to right"
