@@ -11,12 +11,12 @@ REVIEW = "REVIEW"
 #: Public
 PUBLIC = "PUBLIC"
 #: Auto Save
-AUTO = "AUTO"
+AUTO_SAVE = "AUTO_SAVE"
 
 #: Choices to use these constants in a database field
 CHOICES = (
     (DRAFT, _("Draft")),
     (REVIEW, _("Pending Review")),
     (PUBLIC, _("Published")),
-    (AUTO, _("Auto Save")),
+    (AUTO_SAVE, _("Auto Save")),
 )

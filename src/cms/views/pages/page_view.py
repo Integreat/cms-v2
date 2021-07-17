@@ -236,6 +236,13 @@ class PageView(TemplateView, PageContextMixin, MediaContextMixin):
             raise PermissionDenied(
                 f"{request.user.profile!r} does not have the permission to publish {page_form.instance!r}"
             )
+        elif (
+            page_translation_form.instance.status == status.AUTO_SAVE
+            and not page_form.has_changed()
+            and not page_translation_form.has_changed()
+        ):
+            messages.info(request, _("No changes detected, autosave skipped"))
+
         else:
             # Save forms
             page_translation_form.instance.page = page_form.save()

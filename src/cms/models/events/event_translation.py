@@ -35,7 +35,7 @@ class EventTranslation(models.Model):
     )
     #: Manage choices in :mod:`cms.constants.status`
     status = models.CharField(
-        max_length=6,
+        max_length=9,
         choices=status.CHOICES,
         default=status.DRAFT,
         verbose_name=_("status"),
