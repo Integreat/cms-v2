@@ -191,6 +191,12 @@ class ImprintView(TemplateView):
         if not imprint_translation_form.is_valid():
             # Add error messages
             imprint_translation_form.add_error_messages(request)
+        elif (
+            imprint_translation_form.instance.status == status.AUTO_SAVE
+            and not imprint_form.has_changed()
+            and not imprint_translation_form.has_changed()
+        ):
+            messages.info(request, _("No changes detected, autosave skipped"))
         else:
             # Create imprint instance if not exists
             imprint_translation_form.instance.page = (

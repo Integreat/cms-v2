@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-17 16:13+0000\n"
+"POT-Creation-Date: 2021-07-18 14:40+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Integreat <info@integreat-app.de>\n"
 "Language-Team: Integreat <info@integreat-app.de>\n"
@@ -5261,7 +5261,12 @@ msgstr ""
 "veröffentlichen, aber Sie können Änderungen vornehmen und diese zur "
 "Überprüfung vorlegen."
 
-#: views/events/event_view.py:196
+#: views/events/event_view.py:181 views/imprint/imprint_view.py:199
+#: views/pages/page_view.py:244 views/pois/poi_view.py:157
+msgid "No changes detected, autosave skipped"
+msgstr "Keine Änderungen vorgenommen, aber Datum aktualisiert"
+
+#: views/events/event_view.py:202
 msgid "Event \"{}\" was successfully created"
 msgstr "Veranstaltung \"{}\" wurde erfolgreich erstellt"
 
@@ -5361,11 +5366,11 @@ msgstr ""
 "Stattdessen wird die <a href='%(revision_url)s' class='underline hover:no-"
 "underline'>Revision %(revision)s</a> in den Apps angezeigt."
 
-#: views/imprint/imprint_view.py:203
+#: views/imprint/imprint_view.py:209
 msgid "Imprint was successfully created"
 msgstr "Impressum wurde erfolgreich erstellt"
 
-#: views/imprint/imprint_view.py:257 views/pages/page_view.py:322
+#: views/imprint/imprint_view.py:263 views/pages/page_view.py:322
 #, python-brace-format
 msgid "{source_language} to {target_language}"
 msgstr "{source_language} nach {target_language}"
@@ -5762,10 +5767,6 @@ msgstr ""
 "Sie haben nicht die nötige Berechtigung, um diese Seite zu veröffentlichen, "
 "aber Sie können Änderungen vornehmen und diese zur Überprüfung vorlegen."
 
-#: views/pages/page_view.py:244
-msgid "No changes detected, autosave skipped"
-msgstr "Keine Änderungen vorgenommen, aber Datum aktualisiert"
-
 #: views/pages/page_view.py:254
 msgid "Page \"{}\" was successfully created"
 msgstr "Seite \"{}\" wurde erfolgreich erstellt"
@@ -5824,7 +5825,7 @@ msgstr "Sie können Orte nur in der Standard-Sprache (%(language)s) anlegen"
 msgid "You cannot edit this location because it is archived."
 msgstr "Sie können diesen Ort nicht bearbeiten, da er archiviert ist."
 
-#: views/pois/poi_view.py:160
+#: views/pois/poi_view.py:166
 msgid "Location \"{}\" was successfully created"
 msgstr "Ort \"{}\" wurde erfolgreich erstellt"
 

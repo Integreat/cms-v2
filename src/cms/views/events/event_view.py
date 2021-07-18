@@ -173,6 +173,12 @@ class EventView(TemplateView, EventContextMixin, MediaContextMixin):
             event_form.add_error_messages(request)
             event_translation_form.add_error_messages(request)
             recurrence_rule_form.add_error_messages(request)
+        elif (
+            event_translation_form.instance.status == status.AUTO_SAVE
+            and not event_form.has_changed()
+            and not event_translation_form.has_changed()
+        ):
+            messages.info(request, _("No changes detected, autosave skipped"))
         else:
             # Check publish permissions
             if event_translation_form.instance.status == status.PUBLIC:

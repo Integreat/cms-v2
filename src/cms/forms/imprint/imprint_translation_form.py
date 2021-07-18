@@ -32,7 +32,9 @@ class ImprintTranslationForm(CustomContentModelForm):
             # Copy QueryDict because it is immutable
             data = kwargs.pop("data").copy()
             # Update the POST field with the status corresponding to the submitted button
-            if "submit_draft" in data:
+            if "submit_auto" in data:
+                data["status"] = status.AUTO_SAVE
+            elif "submit_draft" in data:
                 data["status"] = status.DRAFT
             elif "submit_public" in data:
                 data["status"] = status.PUBLIC
