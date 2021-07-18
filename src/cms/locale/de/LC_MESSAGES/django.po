@@ -5764,7 +5764,7 @@ msgstr ""
 
 #: views/pages/page_view.py:244
 msgid "No changes detected, autosave skipped"
-msgstr "Keine Änderungen vorgenommen, aber Datum aktualisiert"
+msgstr "Keine Änderungen vorgenommen, automatisches Speichern übersprungen"
 
 #: views/pages/page_view.py:254
 msgid "Page \"{}\" was successfully created"
