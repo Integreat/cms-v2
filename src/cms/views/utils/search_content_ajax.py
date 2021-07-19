@@ -21,7 +21,7 @@ def format_object_translation(object_translation, typ):
     Formats the [poi/event/page]-translation as json
 
     :param object_translation: A translation object which has a title and a permalink
-    :type object_translation: ~src.cms.models.events.event.Event or ~src.cms.models.pages.page.Page or ~src.cms.models.pois.poi.POI
+    :type object_translation: ~cms.models.events.event.Event or ~cms.models.pages.page.Page or ~cms.models.pois.poi.POI
     :param typ: The type of this object
     :type typ: str
     :return: A dictionary with the title, url and type of the translation object
@@ -40,7 +40,7 @@ def find_objects(object_manager, query, language_slug):
     that match ``query`` and returns them and their ranking
 
     :param object_manager: The manager for a specific model
-    :type object_manager: ~django.db.models.manager.Manager
+    :type object_manager: ~django.db.models.Manager
     :param query: The query string used for filtering the objects
     :type query: str
     :param language_slug: The language slug
